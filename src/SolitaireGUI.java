@@ -15,13 +15,14 @@ public class SolitaireGUI {
 
         JPanel startMenu = new JPanel();
         startMenu.setLayout(new BoxLayout(startMenu, BoxLayout.Y_AXIS));
+        startMenu.setBackground(new Color(0,102,10));
 
         JLabel menu = new JLabel("Menu");
         menu.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton newGameButton = new JButton("New Game");
-        JButton loadGameButton = new JButton("Load Game");
-        JButton statsButton = new JButton("Statistics");
-        JButton exitButton = new JButton("Exit");
+        JButton newGameButton = createButton("New Game");
+        JButton loadGameButton = createButton("Load Game");
+        JButton statsButton = createButton("Statistics");
+        JButton exitButton = createButton("Exit");
 
         startMenu.add(menu);
         startMenu.add(newGameButton);
@@ -30,21 +31,31 @@ public class SolitaireGUI {
         startMenu.add(exitButton);
 
         JPanel gameScreen = new JPanel();
-        gameScreen.setBackground(Color.red);
-        JButton backButton = new JButton("Back to Menu");
+        gameScreen.setBackground(new Color(0,102,0));
+        JButton backButton = new JButton("Back to menu");
+        JButton giveUpButton = new JButton("Give up");
+
         gameScreen.add(backButton, BorderLayout.SOUTH);
+        gameScreen.add(giveUpButton, "Give up");
 
 
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
 
-        newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
-        exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
+        newGameButton.addActionListener(_ -> cardLayout.show(mainPanel, "Game Screen"));
+        exitButton.addActionListener(_ -> System.exit(0));
+        backButton.addActionListener(_ -> cardLayout.show(mainPanel, "Start Menu"));
 
         frame.add(mainPanel);
 
         frame.setVisible(true);
+    }
+
+    private static JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setMaximumSize(new Dimension(200, 40));
+        return button;
     }
 
 }
