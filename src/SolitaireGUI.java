@@ -1,5 +1,10 @@
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+
 
 public class SolitaireGUI {
 
@@ -53,14 +58,43 @@ public class SolitaireGUI {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
 
-        JPanel aboveTableauPanel = new JPanel();
+        JPanel aboveTableauPanel = new JPanel(new GridLayout(1,2));
         aboveTableauPanel.setBackground(new Color(0, 153, 0));
-        aboveTableauPanel.setLayout(new GridLayout(1,2));
         aboveTableauPanel.setOpaque(false);
         
-        JPanel foundationPanel = new JPanel();
-        foundationPanel.add(new JLabel("Foundation", SwingConstants.CENTER));
-        aboveTableauPanel.add(foundationPanel);
+        JPanel foundationsPanel = new JPanel(new GridLayout(1,4));
+        JPanel heartsFoundation = new JPanel();
+        JPanel diamondsFoundation = new JPanel();
+        JPanel clubsFoundation = new JPanel();
+        JPanel spadesFoundation = new JPanel();
+
+        Border emptyBorder = new CompoundBorder(
+            new LineBorder(Color.LIGHT_GRAY, 2, true),
+            new EmptyBorder(10, 10, 10, 10)
+        );
+
+        heartsFoundation.setBorder(emptyBorder);
+        diamondsFoundation.setBorder(emptyBorder);
+        clubsFoundation.setBorder(emptyBorder);
+        spadesFoundation.setBorder(emptyBorder);
+
+        heartsFoundation.add(new JLabel("♥", SwingConstants.CENTER));
+        diamondsFoundation.add(new JLabel("♦", SwingConstants.CENTER));
+        clubsFoundation.add(new JLabel("♣", SwingConstants.CENTER));
+        spadesFoundation.add(new JLabel("♠", SwingConstants.CENTER));
+
+
+        heartsFoundation.setPreferredSize(new Dimension(80, 120));
+        diamondsFoundation.setPreferredSize(new Dimension(80, 120));
+        clubsFoundation.setPreferredSize(new Dimension(80, 120));
+        spadesFoundation.setPreferredSize(new Dimension(80, 120));
+   
+        foundationsPanel.add(heartsFoundation);
+        foundationsPanel.add(diamondsFoundation);
+        foundationsPanel.add(clubsFoundation);
+        foundationsPanel.add(spadesFoundation);
+ 
+        aboveTableauPanel.add(foundationsPanel);
 
         JPanel trashPanel = new JPanel();
         trashPanel.add(new JLabel("Trash", SwingConstants.CENTER));
@@ -72,22 +106,29 @@ public class SolitaireGUI {
 
         cardsPanel.add(aboveTableauPanel, gbc);
 
+        List<Card> deck = createDeck();
+
         JPanel tableauPanel = new JPanel(new GridLayout(1,9));
         tableauPanel.setBackground(new Color(100,0,0));
         tableauPanel.setOpaque(false);
+
         for (int i=0; i<9; i++) {
+        
             JPanel pilePanel = new JPanel();
             pilePanel.setLayout(new OverlayLayout(pilePanel));
             pilePanel.setOpaque(false);
             pilePanel.setAlignmentY(0.0f);
 
             if (i==0 || i==8) tableauPanel.add(new JLabel(""));
-            else {      
-                for (int j = 0; j < i+1; j++) {
-                    Card card = new Card("Hearts", String.valueOf(j+1), "cardsimgs/" + (j + 1) + "_of_spades.png");
+
+            else {    
+
+                for (int j=0; j<i+1; j++) {
+
+                    Card card = deck.remove(0); 
                     JLabel cardLabel;
 
-                    if (j == i) {
+                    if (j==i) {
                         cardLabel = createCardLabel(card, true);
                     } else {
                         cardLabel = createCardLabel(card, false);
@@ -96,7 +137,7 @@ public class SolitaireGUI {
                     cardLabel.setAlignmentY(0.0f);
 
                     cardLabel.setBorder(BorderFactory.createEmptyBorder(j*20, 0, 0, 0));
-                    pilePanel.add(cardLabel,0);   
+                    pilePanel.add(cardLabel,0);    
                 }
             }
             tableauPanel.add(pilePanel);
@@ -108,11 +149,7 @@ public class SolitaireGUI {
 
         cardsPanel.add(tableauPanel, gbc);
         
-        aboveTableauPanel.setPreferredSize(new Dimension(1000, 60));
-        aboveTableauPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-        tableauPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
-        
-
+       
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
 
 
@@ -139,13 +176,36 @@ public class SolitaireGUI {
     }
 
     private JLabel createCardLabel(Card card, boolean isFaceUp) {
-        String imgPath = isFaceUp ? card.getImgPath() : "cardsimgs/back.png";
+
+        String imgPath = isFaceUp ? "cardsimgs/" + card.getRank() + "_of_" + card.getSuit() + ".png" : "cardsimgs/back.png";
         ImageIcon icon = new ImageIcon(imgPath);
-        Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH); // Resize image
+
+        Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
         icon = new ImageIcon(scaledImage);
+
         JLabel cardLabel = new JLabel(icon);
         cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         return cardLabel;
+    }
+
+    private List<Card> createDeck() {
+
+        List<Card> deck = new ArrayList<>();
+        String[] suits = {"hearts", "diamonds", "clubs", "spades"};
+        String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+
+        for (String suit : suits) {
+
+            for (String rank : ranks) { 
+                deck.add(new Card(suit, rank));
+            }
+
+        }
+
+        Collections.shuffle(deck);
+
+        return deck;
     }
 
 

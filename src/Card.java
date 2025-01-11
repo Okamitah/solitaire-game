@@ -8,11 +8,9 @@ public class Card {
     private String imgPath;
     private boolean isFaceUp;
 
-    public Card(String suit, String rank, String imgPath) {
+    public Card(String suit, String rank) {
         this.suit = suit;
         this.rank = rank;
-        this.imgPath = imgPath;
-        this.isFaceUp = false;
     }
     
     public String getSuit() {
