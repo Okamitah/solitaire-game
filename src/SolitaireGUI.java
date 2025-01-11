@@ -79,6 +79,7 @@ public class SolitaireGUI {
             JPanel pilePanel = new JPanel();
             pilePanel.setLayout(new OverlayLayout(pilePanel));
             pilePanel.setOpaque(false);
+            pilePanel.setAlignmentY(0.0f);
 
             if (i==0 || i==8) tableauPanel.add(new JLabel(""));
             else {      
@@ -92,8 +93,10 @@ public class SolitaireGUI {
                         cardLabel = createCardLabel(card, false);
                     }
 
-                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j * 50, 0, 0, 0));
-                    pilePanel.add(cardLabel);   
+                    cardLabel.setAlignmentY(0.0f);
+
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*20, 0, 0, 0));
+                    pilePanel.add(cardLabel,0);   
                 }
             }
             tableauPanel.add(pilePanel);
@@ -104,6 +107,11 @@ public class SolitaireGUI {
         gbc.weighty = 0.75;
 
         cardsPanel.add(tableauPanel, gbc);
+        
+        aboveTableauPanel.setPreferredSize(new Dimension(1000, 60));
+        aboveTableauPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        tableauPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
+        
 
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
 
