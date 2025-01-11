@@ -30,26 +30,116 @@ public class SolitaireGUI {
         startMenu.add(statsButton);
         startMenu.add(exitButton);
 
-        JPanel gameScreen = new JPanel();
+        // The game screen:
+        
+        JPanel gameScreen = new JPanel(new BorderLayout());
         gameScreen.setBackground(new Color(0,102,0));
+
+        // Buttons panel
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonsPanel.setOpaque(false);
         JButton backButton = new JButton("Back to menu");
         JButton giveUpButton = new JButton("Give up");
+        buttonsPanel.add(backButton);
+        buttonsPanel.add(giveUpButton);
+        gameScreen.add(buttonsPanel, BorderLayout.NORTH);
+        
+        // Cards panel
+        JPanel cardsPanel = new JPanel();
+        cardsPanel.setLayout(new GridBagLayout());
+        cardsPanel.setOpaque(false);
 
-        gameScreen.add(backButton, BorderLayout.SOUTH);
-        gameScreen.add(giveUpButton, "Give up");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
 
+        JPanel aboveTableauPanel = new JPanel();
+        aboveTableauPanel.setBackground(new Color(0, 153, 0));
+        aboveTableauPanel.setLayout(new GridLayout(1,2));
+        aboveTableauPanel.setOpaque(false);
+        
+        JPanel foundationPanel = new JPanel();
+        foundationPanel.add(new JLabel("Foundation", SwingConstants.CENTER));
+        aboveTableauPanel.add(foundationPanel);
+
+        JPanel trashPanel = new JPanel();
+        trashPanel.add(new JLabel("Trash", SwingConstants.CENTER));
+        aboveTableauPanel.add(trashPanel);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 0.25;
+
+        cardsPanel.add(aboveTableauPanel, gbc);
+
+        JPanel tableauPanel = new JPanel(new GridLayout(1,9));
+        tableauPanel.setBackground(new Color(100,0,0));
+        tableauPanel.setOpaque(false);
+        for (int i=0; i<9; i++) {
+            JPanel pilePanel = new JPanel();
+            pilePanel.setLayout(new OverlayLayout(pilePanel));
+            pilePanel.setOpaque(false);
+
+            if (i==0 || i==8) tableauPanel.add(new JLabel(""));
+            else {      
+                for (int j = 0; j < i+1; j++) {
+                    Card card = new Card("Hearts", String.valueOf(j+1), "cardsimgs/" + (j + 1) + "_of_spades.png");
+                    JLabel cardLabel;
+
+                    if (j == i) {
+                        cardLabel = createCardLabel(card, true);
+                    } else {
+                        cardLabel = createCardLabel(card, false);
+                    }
+
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j * 50, 0, 0, 0));
+                    pilePanel.add(cardLabel);   
+                }
+            }
+            tableauPanel.add(pilePanel);
+        }
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weighty = 0.75;
+
+        cardsPanel.add(tableauPanel, gbc);
+
+        gameScreen.add(cardsPanel, BorderLayout.CENTER);
+
+
+        //cardsPanel.add(tableauPanel);
+
+        // Timer panel
+        JPanel timerPanel = new JPanel();
+        timerPanel.setBackground(new Color(0,0,0));
+        timerPanel.add(new JLabel("Timer: 00:00"));
+        gameScreen.add(timerPanel, BorderLayout.SOUTH);
+
+        // Main panel
 
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
 
-        newGameButton.addActionListener(_ -> cardLayout.show(mainPanel, "Game Screen"));
-        exitButton.addActionListener(_ -> System.exit(0));
-        backButton.addActionListener(_ -> cardLayout.show(mainPanel, "Start Menu"));
-
+        newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
+        exitButton.addActionListener(e -> System.exit(0));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
+        
         frame.add(mainPanel);
 
         frame.setVisible(true);
     }
+
+    private JLabel createCardLabel(Card card, boolean isFaceUp) {
+        String imgPath = isFaceUp ? card.getImgPath() : "cardsimgs/back.png";
+        ImageIcon icon = new ImageIcon(imgPath);
+        Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH); // Resize image
+        icon = new ImageIcon(scaledImage);
+        JLabel cardLabel = new JLabel(icon);
+        cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return cardLabel;
+    }
+
 
     private static JButton createButton(String text) {
         JButton button = new JButton(text);
@@ -59,3 +149,4 @@ public class SolitaireGUI {
     }
 
 }
+
