@@ -1,16 +1,18 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
-
+import java.awt.event.*;
 
 public class SolitaireGUI {
     
     private String[] suits = {"hearts", "spades", "clubs", "diamonds"};
     private String[] ranks = {"ace","2","3","4","5","6","7","8","9","10","jack","queen","king"};
-
+    private List<Card> stock = new ArrayList<>();
+    private List<Card> waste = new ArrayList<>();
 
     public SolitaireGUI() {
 
@@ -102,15 +104,25 @@ public class SolitaireGUI {
  
         aboveTableauPanel.add(foundationsPanel);
 
-        JPanel trashPanel = new JPanel(new GridLayout(1,2));
+        JPanel trashPanel = new JPanel(new GridLayout(1,4));
         trashPanel.setOpaque(false);
-        
-        JPanel stockPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
-        stockPanel.setPreferredSize(new Dimension(80,120));
-        stockPanel.setBorder(emptyBorder);
 
+        JPanel pl1 = new JPanel();
+        pl1.setBackground(new Color(0,102,0));
+        trashPanel.add(pl1);
+        JPanel pl2 = new JPanel();
+        pl2.setBackground(new Color(0,102,0));
+        trashPanel.add(pl2);
+        
+        JPanel stockPanel = new JPanel();
+        stockPanel.setLayout(new OverlayLayout(stockPanel));
+        stockPanel.setBackground(new Color(0,102,0));
+        stockPanel.setPreferredSize(new Dimension(80,120));
+        stockPanel.setOpaque(false);
+               
         for (int i=0; i<24; i++) {
             Card card = deck.remove(0);
+            stock.add(card);
             JLabel cardLabel = createCardLabel(card, false);
             stockPanel.add(cardLabel);
         }
@@ -118,8 +130,15 @@ public class SolitaireGUI {
         trashPanel.add(stockPanel);
         
         JPanel wastePanel = new JPanel();
+        wastePanel.setLayout(new OverlayLayout(wastePanel));
         wastePanel.setPreferredSize(new Dimension(80,120));
-        wastePanel.setBorder(emptyBorder);
+
+        /*for (Card card : waste) {
+            JLabel cardLabel = createCardLabel(card, true);
+            wastePanel.add(cardLabel,0);
+        }*/
+
+        wastePanel.setBackground(new Color(0,102,0));
         trashPanel.add(wastePanel);
 
         aboveTableauPanel.add(trashPanel);
@@ -158,7 +177,7 @@ public class SolitaireGUI {
 
                     cardLabel.setAlignmentY(0.0f);
 
-                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*20, 0, 0, 0));
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
                     pilePanel.add(cardLabel,0);    
                 }
             }
@@ -188,10 +207,37 @@ public class SolitaireGUI {
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
 
+        // Event listeners
+
         newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
+
         exitButton.addActionListener(e -> System.exit(0));
+
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
-        
+
+        stockPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (stockPanel.getComponentCount() > 0 && !stock.isEmpty()) {
+                    Component cardComponent = stockPanel.getComponent(0);
+                    stockPanel.remove(cardComponent);
+
+                    Card drawnCard = stock.remove(0);
+                    waste.add(drawnCard);
+
+                    JLabel faceUpCard = createCardLabel(drawnCard, true);
+
+                    wastePanel.add(faceUpCard,0); 
+
+                    stockPanel.revalidate();
+                    stockPanel.repaint();
+                    wastePanel.revalidate();
+                    wastePanel.repaint();
+                }
+            }
+        });
+
+
         frame.add(mainPanel);
 
         frame.setVisible(true);
@@ -233,6 +279,5 @@ public class SolitaireGUI {
         button.setMaximumSize(new Dimension(200, 40));
         return button;
     }
-
 }
 
