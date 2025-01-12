@@ -7,6 +7,9 @@ import java.util.Collections;
 
 
 public class SolitaireGUI {
+    
+    private String[] suits = {"hearts", "spades", "clubs", "diamonds"};
+    private String[] ranks = {"ace","2","3","4","5","6","7","8","9","10","jack","queen","king"};
 
 
     public SolitaireGUI() {
@@ -54,16 +57,19 @@ public class SolitaireGUI {
         cardsPanel.setLayout(new GridBagLayout());
         cardsPanel.setOpaque(false);
 
+        List<Card> deck = createDeck();
+      
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
 
-        JPanel aboveTableauPanel = new JPanel(new GridLayout(1,2));
-        aboveTableauPanel.setBackground(new Color(0, 153, 0));
+        JPanel aboveTableauPanel = new JPanel(new GridLayout(1,2)); 
         aboveTableauPanel.setOpaque(false);
         
         JPanel foundationsPanel = new JPanel(new GridLayout(1,4));
         JPanel heartsFoundation = new JPanel();
+        heartsFoundation.setMaximumSize(new Dimension(80, 120));
+        
         JPanel diamondsFoundation = new JPanel();
         JPanel clubsFoundation = new JPanel();
         JPanel spadesFoundation = new JPanel();
@@ -96,8 +102,26 @@ public class SolitaireGUI {
  
         aboveTableauPanel.add(foundationsPanel);
 
-        JPanel trashPanel = new JPanel();
-        trashPanel.add(new JLabel("Trash", SwingConstants.CENTER));
+        JPanel trashPanel = new JPanel(new GridLayout(1,2));
+        trashPanel.setOpaque(false);
+        
+        JPanel stockPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
+        stockPanel.setPreferredSize(new Dimension(80,120));
+        stockPanel.setBorder(emptyBorder);
+
+        for (int i=0; i<24; i++) {
+            Card card = deck.remove(0);
+            JLabel cardLabel = createCardLabel(card, false);
+            stockPanel.add(cardLabel);
+        }
+
+        trashPanel.add(stockPanel);
+        
+        JPanel wastePanel = new JPanel();
+        wastePanel.setPreferredSize(new Dimension(80,120));
+        wastePanel.setBorder(emptyBorder);
+        trashPanel.add(wastePanel);
+
         aboveTableauPanel.add(trashPanel);
 
         gbc.gridx = 0;
@@ -105,9 +129,7 @@ public class SolitaireGUI {
         gbc.weighty = 0.25;
 
         cardsPanel.add(aboveTableauPanel, gbc);
-
-        List<Card> deck = createDeck();
-
+ 
         JPanel tableauPanel = new JPanel(new GridLayout(1,9));
         tableauPanel.setBackground(new Color(100,0,0));
         tableauPanel.setOpaque(false);
@@ -123,12 +145,12 @@ public class SolitaireGUI {
 
             else {    
 
-                for (int j=0; j<i+1; j++) {
+                for (int j=0; j<i; j++) {
 
                     Card card = deck.remove(0); 
                     JLabel cardLabel;
 
-                    if (j==i) {
+                    if (j==i-1) {
                         cardLabel = createCardLabel(card, true);
                     } else {
                         cardLabel = createCardLabel(card, false);
@@ -192,9 +214,6 @@ public class SolitaireGUI {
     private List<Card> createDeck() {
 
         List<Card> deck = new ArrayList<>();
-        String[] suits = {"hearts", "diamonds", "clubs", "spades"};
-        String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
-
         for (String suit : suits) {
 
             for (String rank : ranks) { 
@@ -207,7 +226,6 @@ public class SolitaireGUI {
 
         return deck;
     }
-
 
     private static JButton createButton(String text) {
         JButton button = new JButton(text);
