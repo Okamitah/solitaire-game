@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Collections;
 import java.awt.event.*;
 
@@ -13,8 +15,19 @@ public class SolitaireGUI {
     private String[] ranks = {"ace","2","3","4","5","6","7","8","9","10","jack","queen","king"};
     private List<Card> stock = new ArrayList<>();
     private List<Card> waste = new ArrayList<>();
+    private Map<String,List<Card>> foundations = new HashMap<>();
+    private List<Card> hearts = new ArrayList<>();
+    private List<Card> diamonds = new ArrayList<>();
+    private List<Card> spades = new ArrayList<>();
+    private Map<String,List<Card>> piles = new HashMap<>();
+    private List<Card> clubs = new ArrayList<>();
+    private Point initialClick;
 
     public SolitaireGUI() {
+        
+        for (int i=1; i<8; i++) {
+            piles.put("pile"+i,new ArrayList<Card>());
+        }
 
         JFrame frame = new JFrame("Solitaire");
         frame.setSize(1000,600);
@@ -69,9 +82,8 @@ public class SolitaireGUI {
         aboveTableauPanel.setOpaque(false);
         
         JPanel foundationsPanel = new JPanel(new GridLayout(1,4));
-        JPanel heartsFoundation = new JPanel();
-        heartsFoundation.setMaximumSize(new Dimension(80, 120));
-        
+
+        JPanel heartsFoundation = new JPanel();        
         JPanel diamondsFoundation = new JPanel();
         JPanel clubsFoundation = new JPanel();
         JPanel spadesFoundation = new JPanel();
@@ -133,11 +145,6 @@ public class SolitaireGUI {
         wastePanel.setLayout(new OverlayLayout(wastePanel));
         wastePanel.setPreferredSize(new Dimension(80,120));
 
-        /*for (Card card : waste) {
-            JLabel cardLabel = createCardLabel(card, true);
-            wastePanel.add(cardLabel,0);
-        }*/
-
         wastePanel.setBackground(new Color(0,102,0));
         trashPanel.add(wastePanel);
 
@@ -182,6 +189,22 @@ public class SolitaireGUI {
                 }
             }
             tableauPanel.add(pilePanel);
+
+            pilePanel.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    initialClick = e.getPoint();                    
+                }
+            });
+
+            pilePanel.addMouseMotionListener(new MouseAdapter() {
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    dragCard(e, getTarget());                
+                }
+            });
         }
 
         gbc.gridx = 0;
@@ -189,13 +212,9 @@ public class SolitaireGUI {
         gbc.weighty = 0.75;
 
         cardsPanel.add(tableauPanel, gbc);
-        
-       
+               
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
-
-
-        //cardsPanel.add(tableauPanel);
-
+ 
         // Timer panel
         JPanel timerPanel = new JPanel();
         timerPanel.setBackground(new Color(0,0,0));
@@ -256,6 +275,19 @@ public class SolitaireGUI {
 
         return cardLabel;
     }
+
+    private void moveTableauToTableau(MouseEvent e, JPanel startingPanel, JPanel targetPanel) {
+        
+        
+
+    }
+
+    private JPanel getTarget() {
+        JPanel panel = new JPanel();
+        return panel;
+    }
+
+    private void dragCard(MouseEvent e, JPanel target) {}
 
     private List<Card> createDeck() {
 

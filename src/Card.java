@@ -40,6 +40,8 @@ public class Card {
         return imgPath;
     }
 
+    public boolean getIsFaceUp() {return isFaceUp;}
+
     public void setRank(String rank) {
         this.rank = rank;
     }
