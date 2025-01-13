@@ -24,10 +24,6 @@ public class SolitaireGUI {
     private Point initialClick;
 
     public SolitaireGUI() {
-        
-        for (int i=1; i<8; i++) {
-            piles.put("pile"+i,new ArrayList<Card>());
-        }
 
         JFrame frame = new JFrame("Solitaire");
         frame.setSize(1000,600);
@@ -169,7 +165,7 @@ public class SolitaireGUI {
 
             if (i==0 || i==8) tableauPanel.add(new JLabel(""));
 
-            else {    
+            else {   
 
                 for (int j=0; j<i; j++) {
 
@@ -184,6 +180,15 @@ public class SolitaireGUI {
 
                     cardLabel.setAlignmentY(0.0f);
 
+                    List<Card> pile = piles.get("pile"+i);
+
+                    if (pile == null) {
+                        pile = new ArrayList<>();
+                        piles.put("pile"+i,pile);
+                    } else {
+                        pile.add(card);
+                    }
+
                     cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
                     pilePanel.add(cardLabel,0);    
                 }
@@ -194,7 +199,12 @@ public class SolitaireGUI {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    initialClick = e.getPoint();                    
+                    initialClick = e.getPoint(); 
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    dragRelease(e);
                 }
             });
 
@@ -202,7 +212,9 @@ public class SolitaireGUI {
 
                 @Override
                 public void mouseDragged(MouseEvent e) {
-                    dragCard(e, getTarget());                
+                    Point mousePoint = e.getPoint();
+                    pilePanel.setLocation(pilePanel.getX() + mousePoint.x - pilePanel.getWidth() / 2,
+                    pilePanel.getY() + mousePoint.y - pilePanel.getHeight() / 2);                
                 }
             });
         }
@@ -277,17 +289,12 @@ public class SolitaireGUI {
     }
 
     private void moveTableauToTableau(MouseEvent e, JPanel startingPanel, JPanel targetPanel) {
-        
-        
-
+              
     }
 
-    private JPanel getTarget() {
-        JPanel panel = new JPanel();
-        return panel;
-    }
+    private void dragRelease(MouseEvent e) {
 
-    private void dragCard(MouseEvent e, JPanel target) {}
+    }
 
     private List<Card> createDeck() {
 
