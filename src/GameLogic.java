@@ -17,8 +17,13 @@ public class GameLogic {
     }
     
     public static boolean canBeAddedToPile(Card card, List<Card> pile) {
-        Card lastCard = pile.get(pile.size()-1);
-        return (!sameColor(card, lastCard) && isCardRankOneUp(lastCard, card));
+        if (pile.isEmpty()) {
+            if (card.getRank() == "king") return true;
+            else return false;
+        } else {
+            Card lastCard = pile.get(pile.size()-1);
+            return (!sameColor(card, lastCard) && isCardRankOneUp(lastCard, card));
+        }
     }
 
     public static boolean isCardRankOneUp(Card card1, Card card2) {

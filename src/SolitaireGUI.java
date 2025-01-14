@@ -22,7 +22,7 @@ public class SolitaireGUI {
     private Map<String,List<Card>> piles = new HashMap<>();
     private List<Card> clubs = new ArrayList<>();
     private Point initialClick;
-
+    
     public SolitaireGUI() {
 
         JFrame frame = new JFrame("Solitaire");
@@ -188,35 +188,33 @@ public class SolitaireGUI {
                     } else {
                         pile.add(card);
                     }
+                    
+                    cardLabel.addMouseListener(new MouseAdapter() {
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            press(pilePanel, e);
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            release(cardLabel, e);
+                        }
+                    });
+
+                    cardLabel.addMouseMotionListener(new MouseAdapter() {
+
+                        @Override
+                        public void mouseDragged(MouseEvent e) {
+                            drag(pilePanel,cardLabel,e); 
+                        }
+                    });
 
                     cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
                     pilePanel.add(cardLabel,0);    
                 }
             }
             tableauPanel.add(pilePanel);
-
-            pilePanel.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    initialClick = e.getPoint(); 
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    dragRelease(e);
-                }
-            });
-
-            pilePanel.addMouseMotionListener(new MouseAdapter() {
-
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    Point mousePoint = e.getPoint();
-                    pilePanel.setLocation(pilePanel.getX() + mousePoint.x - pilePanel.getWidth() / 2,
-                    pilePanel.getY() + mousePoint.y - pilePanel.getHeight() / 2);                
-                }
-            });
         }
 
         gbc.gridx = 0;
@@ -268,7 +266,6 @@ public class SolitaireGUI {
             }
         });
 
-
         frame.add(mainPanel);
 
         frame.setVisible(true);
@@ -287,15 +284,7 @@ public class SolitaireGUI {
 
         return cardLabel;
     }
-
-    private void moveTableauToTableau(MouseEvent e, JPanel startingPanel, JPanel targetPanel) {
-              
-    }
-
-    private void dragRelease(MouseEvent e) {
-
-    }
-
+ 
     private List<Card> createDeck() {
 
         List<Card> deck = new ArrayList<>();
@@ -312,6 +301,34 @@ public class SolitaireGUI {
         return deck;
     }
 
+    private void release(JLabel label, MouseEvent e) {
+
+    }
+
+    private void drag(JPanel panel, JLabel label, MouseEvent e) {
+        JPanel draggedPanel = new JPanel();
+        draggedPanel.add(label); 
+        Point mousePoint = e.getPoint();
+        panel.setLocation(panel.getX() + mousePoint.x - panel.getWidth() / 2,
+        panel.getY() + mousePoint.y - panel.getHeight() / 2);
+    }
+
+    private void press(JPanel panel, MouseEvent e) {
+
+        initialClick = e.getPoint(); 
+        Component label = panel.getComponentAt(initialClick);
+        JPanel draggedPanel = new JPanel();
+
+        if (label instanceof JLabel) {
+            JLabel clickedLabel = (JLabel) label;
+            int index = panel.getComponentZOrder(clickedLabel); 
+        }
+
+        for (int i=panel.getComponentCount(); i<index; i--) {
+            
+        } 
+    }
+
     private static JButton createButton(String text) {
         JButton button = new JButton(text);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -319,4 +336,3 @@ public class SolitaireGUI {
         return button;
     }
 }
-

@@ -19,13 +19,13 @@ public class Card {
 
     public int getIntRank() {
         switch (rank) {
-            case "A":
+            case "ace":
                 return 1;
-            case "J":
+            case "jack":
                 return 11;
-            case "Q":
+            case "queen":
                 return 12;
-            case "K":
+            case "king":
                 return 13;
             default:
                 return Integer.parseInt(rank);
@@ -63,5 +63,4 @@ public class Card {
     public String toString() {
         return rank + " of " + suit;
     }
-
 }
