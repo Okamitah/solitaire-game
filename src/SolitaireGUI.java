@@ -22,6 +22,7 @@ public class SolitaireGUI {
     private Map<String,List<Card>> piles = new HashMap<>();
     private List<Card> clubs = new ArrayList<>();
     private Point initialClick;
+    private JPanel draggedPanel = new JPanel();
     
     public SolitaireGUI() {
 
@@ -188,8 +189,11 @@ public class SolitaireGUI {
                     } else {
                         pile.add(card);
                     }
-                    
-                    cardLabel.addMouseListener(new MouseAdapter() {
+                   
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
+                    pilePanel.add(cardLabel,0);    
+                }
+                pilePanel.addMouseListener(new MouseAdapter() {
 
                         @Override
                         public void mousePressed(MouseEvent e) {
@@ -198,21 +202,10 @@ public class SolitaireGUI {
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
-                            release(cardLabel, e);
+                            release(e);
                         }
-                    });
+                });
 
-                    cardLabel.addMouseMotionListener(new MouseAdapter() {
-
-                        @Override
-                        public void mouseDragged(MouseEvent e) {
-                            drag(pilePanel,cardLabel,e); 
-                        }
-                    });
-
-                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
-                    pilePanel.add(cardLabel,0);    
-                }
             }
             tableauPanel.add(pilePanel);
         }
@@ -266,6 +259,17 @@ public class SolitaireGUI {
             }
         });
 
+        tableauPanel.add(draggedPanel);
+
+        draggedPanel.addMouseMotionListener(new MouseAdapter() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                drag(e, draggedPanel);
+            }
+        });
+
+
         frame.add(mainPanel);
 
         frame.setVisible(true);
@@ -282,9 +286,16 @@ public class SolitaireGUI {
         JLabel cardLabel = new JLabel(icon);
         cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        cardLabel.putClientProperty("card", card);
+
         return cardLabel;
     }
- 
+
+    private Card getCardFromLabel(JLabel cardLabel) {
+        Card card = (Card) cardLabel.getClientProperty("card");
+        return card;
+    }
+
     private List<Card> createDeck() {
 
         List<Card> deck = new ArrayList<>();
@@ -301,33 +312,55 @@ public class SolitaireGUI {
         return deck;
     }
 
-    private void release(JLabel label, MouseEvent e) {
+    private void release(MouseEvent e) {
 
     }
 
-    private void drag(JPanel panel, JLabel label, MouseEvent e) {
-        JPanel draggedPanel = new JPanel();
-        draggedPanel.add(label); 
+    private void drag(MouseEvent e, JPanel draggedPanel) { 
+        draggedPanel.setLayout(new OverlayLayout(draggedPanel));
+        draggedPanel.setOpaque(false);
+        draggedPanel.setBackground(Color.red);
         Point mousePoint = e.getPoint();
-        panel.setLocation(panel.getX() + mousePoint.x - panel.getWidth() / 2,
-        panel.getY() + mousePoint.y - panel.getHeight() / 2);
+        draggedPanel.setLocation(draggedPanel.getX() + mousePoint.x - draggedPanel.getWidth() / 2,
+        draggedPanel.getY() + mousePoint.y - draggedPanel.getHeight() / 2);
     }
 
     private void press(JPanel panel, MouseEvent e) {
-
+        draggedPanel = new JPanel();        
         initialClick = e.getPoint(); 
         Component label = panel.getComponentAt(initialClick);
-        JPanel draggedPanel = new JPanel();
-
+        
         if (label instanceof JLabel) {
             JLabel clickedLabel = (JLabel) label;
-            int index = panel.getComponentZOrder(clickedLabel); 
+            Card clickedCard = getCardFromLabel(clickedLabel);
+            if (clickedCard.getIsFaceUp()) {
+                int index = panel.getComponentZOrder(clickedLabel);
+                draggedPanel.add(clickedLabel);
+                System.out.println(index);
+                for (int i=index; i>0; i--) {
+                    Component cLabel = panel.getComponent(i);
+                    JLabel uLabel = (JLabel) cLabel;
+                    uLabel.setBorder(BorderFactory.createEmptyBorder(i*30,0,0,0));
+                    draggedPanel.add(uLabel,0);
+                }
+            }
+            System.out.println(draggedPanel.getComponentCount());
         }
 
-        for (int i=panel.getComponentCount(); i<index; i--) {
-            
-        } 
     }
+
+    private JLabel getLabelAtPoint(JPanel panel, Point point) {
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JLabel) {
+                Rectangle bounds = component.getBounds();
+                if (bounds.contains(point)) {
+                    return (JLabel) component;
+                }
+            }
+        }
+        return null;
+    }
+
 
     private static JButton createButton(String text) {
         JButton button = new JButton(text);
