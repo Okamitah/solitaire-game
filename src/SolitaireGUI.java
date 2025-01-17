@@ -69,8 +69,7 @@ public class SolitaireGUI {
         cardsPanel.setLayout(new GridBagLayout());
         cardsPanel.setOpaque(false);
 
-        List<Card> deck = createDeck();
-      
+              
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
@@ -128,12 +127,15 @@ public class SolitaireGUI {
         stockPanel.setBackground(new Color(0,102,0));
         stockPanel.setPreferredSize(new Dimension(80,120));
         stockPanel.setOpaque(false);
+
+        List<Card> deck = createDeck();
                
         for (int i=0; i<24; i++) {
             Card card = deck.remove(0);
             stock.add(card);
             JLabel cardLabel = createCardLabel(card, false);
             stockPanel.add(cardLabel);
+            stockPanel.putClientProperty("label"+(i+1), cardLabel);
         }
 
         trashPanel.add(stockPanel);
@@ -157,58 +159,7 @@ public class SolitaireGUI {
         tableauPanel.setBackground(new Color(100,0,0));
         tableauPanel.setOpaque(false);
 
-        for (int i=0; i<9; i++) {
-        
-            JPanel pilePanel = new JPanel();
-            pilePanel.setLayout(new OverlayLayout(pilePanel));
-            pilePanel.setOpaque(false);
-            pilePanel.setAlignmentY(0.0f);
-
-            if (i==0 || i==8) tableauPanel.add(new JLabel(""));
-
-            else {   
-
-                for (int j=0; j<i; j++) {
-
-                    Card card = deck.remove(0); 
-                    JLabel cardLabel;
-
-                    if (j==i-1) {
-                        cardLabel = createCardLabel(card, true);
-                    } else {
-                        cardLabel = createCardLabel(card, false);
-                    }
-
-                    cardLabel.setAlignmentY(0.0f);
-
-                    List<Card> pile = piles.get("pile"+i);
-
-                    if (pile == null) {
-                        pile = new ArrayList<>();
-                        piles.put("pile"+i,pile);
-                    } else {
-                        pile.add(card);
-                    }
-                   
-                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
-                    pilePanel.add(cardLabel,0);    
-                }
-                pilePanel.addMouseListener(new MouseAdapter() {
-
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            press(pilePanel, e);
-                        }
-
-                        @Override
-                        public void mouseReleased(MouseEvent e) {
-                            release(e);
-                        }
-                });
-
-            }
-            tableauPanel.add(pilePanel);
-        }
+        createTableau(tableauPanel, deck);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -261,8 +212,10 @@ public class SolitaireGUI {
 
         tableauPanel.add(draggedPanel);
 
+        draggedPanel.setLayout(new OverlayLayout(draggedPanel));
+        //draggedPanel.setOpaque(false);
+        draggedPanel.setBackground(Color.red);
         draggedPanel.addMouseMotionListener(new MouseAdapter() {
-
             @Override
             public void mouseDragged(MouseEvent e) {
                 drag(e, draggedPanel);
@@ -317,35 +270,27 @@ public class SolitaireGUI {
     }
 
     private void drag(MouseEvent e, JPanel draggedPanel) { 
-        draggedPanel.setLayout(new OverlayLayout(draggedPanel));
-        draggedPanel.setOpaque(false);
-        draggedPanel.setBackground(Color.red);
         Point mousePoint = e.getPoint();
         draggedPanel.setLocation(draggedPanel.getX() + mousePoint.x - draggedPanel.getWidth() / 2,
         draggedPanel.getY() + mousePoint.y - draggedPanel.getHeight() / 2);
     }
 
-    private void press(JPanel panel, MouseEvent e) {
-        draggedPanel = new JPanel();        
-        initialClick = e.getPoint(); 
-        Component label = panel.getComponentAt(initialClick);
+    private void press(JPanel panel, JPanel tableau, JPanel draggedPanel,  MouseEvent e) {
+        initialClick = e.getPoint();
+        Component cLabel = panel.getComponent(0);
+        int pileNumber = (Integer) panel.getClientProperty("pileNumber");
+        System.out.println("pile number: " + pileNumber);
+        List<Card> list = piles.get("pile"+pileNumber);
+        if (panel.getComponentCount() > 0 && !list.isEmpty()) {
+            panel.remove(cLabel);
         
-        if (label instanceof JLabel) {
-            JLabel clickedLabel = (JLabel) label;
-            Card clickedCard = getCardFromLabel(clickedLabel);
-            if (clickedCard.getIsFaceUp()) {
-                int index = panel.getComponentZOrder(clickedLabel);
-                draggedPanel.add(clickedLabel);
-                System.out.println(index);
-                for (int i=index; i>0; i--) {
-                    Component cLabel = panel.getComponent(i);
-                    JLabel uLabel = (JLabel) cLabel;
-                    uLabel.setBorder(BorderFactory.createEmptyBorder(i*30,0,0,0));
-                    draggedPanel.add(uLabel,0);
-                }
-            }
-            System.out.println(draggedPanel.getComponentCount());
+            Card card = list.remove(0); 
+        
+            JLabel label = createCardLabel(card, true);
+            draggedPanel.add(label);
         }
+        System.out.println("elements: " + panel.getComponentCount());
+        panel.repaint();
 
     }
 
@@ -359,6 +304,66 @@ public class SolitaireGUI {
             }
         }
         return null;
+    }
+
+    private void createTableau(JPanel tableauPanel, List<Card> deck) {
+        
+        for (int i=0; i<9; i++) {
+        
+            JPanel pilePanel = new JPanel();
+            pilePanel.setLayout(new OverlayLayout(pilePanel));
+            pilePanel.setOpaque(false);
+            pilePanel.setAlignmentY(0.0f);
+
+            if (i==0 || i==8) tableauPanel.add(new JLabel(""));
+
+            else {   
+
+                for (int j=0; j<i; j++) {
+
+                    Card card = deck.remove(0); 
+                    JLabel cardLabel;
+                    
+                    if (j==i-1) {
+                        cardLabel = createCardLabel(card, true);
+                    } else {
+                        cardLabel = createCardLabel(card, false);
+                    }
+
+                    cardLabel.setAlignmentY(0.0f);
+
+                    List<Card> pile = piles.get("pile"+i);
+
+                    if (pile == null) {
+                        pile = new ArrayList<>();
+                        piles.put("pile"+i,pile);
+                    } else {
+                        pile.add(card);
+                    }
+                   
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
+                    pilePanel.add(cardLabel,0);   
+                    
+                }
+
+                pilePanel.putClientProperty("pileNumber",i);
+                
+                pilePanel.addMouseListener(new MouseAdapter() {
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            press(pilePanel, tableauPanel, draggedPanel, e);
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            release(e);
+                        }
+                });
+
+            }
+            tableauPanel.add(pilePanel);
+        }
     }
 
 
