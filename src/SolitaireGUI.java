@@ -213,7 +213,7 @@ public class SolitaireGUI {
         tableauPanel.add(draggedPanel);
 
         draggedPanel.setLayout(new OverlayLayout(draggedPanel));
-        //draggedPanel.setOpaque(false);
+        draggedPanel.setOpaque(false);
         draggedPanel.setBackground(Color.red);
         draggedPanel.addMouseMotionListener(new MouseAdapter() {
             @Override
@@ -244,11 +244,6 @@ public class SolitaireGUI {
         return cardLabel;
     }
 
-    private Card getCardFromLabel(JLabel cardLabel) {
-        Card card = (Card) cardLabel.getClientProperty("card");
-        return card;
-    }
-
     private List<Card> createDeck() {
 
         List<Card> deck = new ArrayList<>();
@@ -277,33 +272,38 @@ public class SolitaireGUI {
 
     private void press(JPanel panel, JPanel tableau, JPanel draggedPanel,  MouseEvent e) {
         initialClick = e.getPoint();
-        Component cLabel = panel.getComponent(0);
+        System.out.println("clickpoint: "+initialClick);
+        Component cLabel = panel.getComponentAt(initialClick);
         int pileNumber = (Integer) panel.getClientProperty("pileNumber");
         System.out.println("pile number: " + pileNumber);
         List<Card> list = piles.get("pile"+pileNumber);
-        if (panel.getComponentCount() > 0 && !list.isEmpty()) {
-            panel.remove(cLabel);
+        int index = -1;
+        Component[] labels = panel.getComponents();
+        int n = labels.length;
+        for (int i=0; i<n; i++) {
+            if (labels[i].equals(cLabel)) {
+                index = i;
+            }
+        }
+        System.out.println("index: "+index);
+        panel.remove(cLabel);
+        if (index >= 0) {
+            for (int i=index+1; i<n; i++) {
+                if (panel.getComponentCount() > 0 && !list.isEmpty()) {
+                    Component c = panel.getComponent(i);
+                    panel.remove(c);
+
+                    Card card = list.remove(i); 
         
-            Card card = list.remove(0); 
-        
-            JLabel label = createCardLabel(card, true);
-            draggedPanel.add(label);
+                    JLabel label = createCardLabel(card, true);
+                    label.setBorder(BorderFactory.createEmptyBorder(30,0,0,0));
+                    draggedPanel.add(label,0);
+                }
+            }
         }
         System.out.println("elements: " + panel.getComponentCount());
         panel.repaint();
 
-    }
-
-    private JLabel getLabelAtPoint(JPanel panel, Point point) {
-        for (Component component : panel.getComponents()) {
-            if (component instanceof JLabel) {
-                Rectangle bounds = component.getBounds();
-                if (bounds.contains(point)) {
-                    return (JLabel) component;
-                }
-            }
-        }
-        return null;
     }
 
     private void createTableau(JPanel tableauPanel, List<Card> deck) {
