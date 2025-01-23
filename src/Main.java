@@ -1,5 +1,7 @@
 public class Main {
     public static void main(String[] args) {
-        new SolitaireGUI ();
+        System.out.println("heeey");
+        new Game();
+        System.out.println("yo");
     }
 }

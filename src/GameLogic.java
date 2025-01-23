@@ -11,9 +11,11 @@ public class GameLogic {
     public static boolean canBeAddedToFoundation(Card card, Map<String,List<Card>> foundations) { 
         String suit = card.getSuit();
         List<Card> foundation = foundations.get(suit);
-        Card lastCard = foundation.get(foundation.size()-1);
-        if (isCardRankOneUp(card, lastCard)) return true;
-        return false;
+        if (foundation.isEmpty()) return card.getRank()=="A";
+        else {
+            Card lastCard = foundation.get(foundation.size()-1);
+            return isCardRankOneUp(card, lastCard);
+        }
     }
     
     public static boolean canBeAddedToPile(Card card, List<Card> pile) {
