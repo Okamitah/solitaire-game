@@ -37,12 +37,14 @@ class Game {
         JButton loadGameButton = new JButton("Load Game");
         JButton statsButton = new JButton("Statistics");
         JButton exitButton = new JButton("Exit");
+        JButton seePile = new JButton("see pile");
 
         startMenu.add(menu);
         startMenu.add(newGameButton);
         startMenu.add(loadGameButton);
         startMenu.add(statsButton);
         startMenu.add(exitButton);
+        startMenu.add(seePile);
 
         // The game screen:
         
@@ -148,6 +150,17 @@ class Game {
         cardsPanel.add(tableauPanel, gbc);
                
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
+
+        //
+        //
+        JPanel cardPile = new JPanel();
+        JPanel tabPanel = new JPanel(new GridLayout(1,9));
+        tabPanel.setBackground(new Color(100,0,0));
+        tabPanel.setOpaque(false);
+
+        cardPile.add(tabPanel);
+        CardPile pile = new CardPile(tabPanel, createDeck(), 2, 't');
+        cardPile.add(pile);
  
         // Timer panel
         JPanel timerPanel = new JPanel();
@@ -157,10 +170,13 @@ class Game {
         // Main panel
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
+
+        mainPanel.add(cardPile, "CardPile");
         // Event listeners
         newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
         exitButton.addActionListener(e -> System.exit(0));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
+        seePile.addActionListener(e -> cardLayout.show(mainPanel, "CardPile"));
         stockPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

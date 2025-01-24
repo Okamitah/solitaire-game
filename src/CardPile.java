@@ -10,8 +10,7 @@ class CardPile extends JComponent {
 
     public CardPile(JPanel tableau, List<Card> deck, int order, char type) {
         
-        //type == 'F' ? cardSpacing = 0 : cardSpacing = 30;
-
+        cardSpacing = (type == 'F') ? 0 : 30;
         for (int i=1; i<=order; i++) {
             Card card = deck.get(0);
             cards.add(card);
@@ -23,7 +22,7 @@ class CardPile extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        
     }
  
 }
