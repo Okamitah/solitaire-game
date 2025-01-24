@@ -123,7 +123,62 @@ class Game {
         List<Card> deck = createDeck();
 
         createStock(deck, stockPanel);
+
         
+        trashPanel.add(stockPanel);
+        
+        JPanel wastePanel = new JPanel();
+        wastePanel.setLayout(new OverlayLayout(wastePanel));
+        wastePanel.setPreferredSize(new Dimension(80,120));
+        wastePanel.setBackground(new Color(0,102,0));
+        trashPanel.add(wastePanel);
+        aboveTableauPanel.add(trashPanel);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 0.25;
+        cardsPanel.add(aboveTableauPanel, gbc);
+ 
+        JPanel tableauPanel = new JPanel(new GridLayout(1,9));
+        tableauPanel.setBackground(new Color(100,0,0));
+        tableauPanel.setOpaque(false);
+        createTableau(tableauPanel, deck);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weighty = 0.75;
+        cardsPanel.add(tableauPanel, gbc);
+               
+        gameScreen.add(cardsPanel, BorderLayout.CENTER);
+ 
+        // Timer panel
+        JPanel timerPanel = new JPanel();
+        timerPanel.setBackground(new Color(0,0,0));
+        timerPanel.add(new JLabel("Timer: 00:00"));
+        gameScreen.add(timerPanel, BorderLayout.SOUTH);
+        // Main panel
+        mainPanel.add(startMenu, "Start Menu");
+        mainPanel.add(gameScreen, "Game Screen");
+        // Event listeners
+        newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
+        exitButton.addActionListener(e -> System.exit(0));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
+        stockPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (stockPanel.getComponentCount() > 0 && !stock.isEmpty()) {
+                    Component cardComponent = stockPanel.getComponent(0);
+                    stockPanel.remove(cardComponent);
+                    Card drawnCard = stock.remove(0);
+                    waste.add(drawnCard);
+                    JLabel faceUpCard = createCardLabel(drawnCard, true);
+                    wastePanel.add(faceUpCard,0); 
+                    stockPanel.revalidate();
+                    stockPanel.repaint();
+                    wastePanel.revalidate();
+                    wastePanel.repaint();
+                }
+            }
+        });
+        frame.add(mainPanel); 
         frame.setVisible(true);
     } 
 
@@ -169,5 +224,43 @@ class Game {
         return cardLabel;
     }
     
+    private void createTableau(JPanel tableauPanel, List<Card> deck) {
+        
+        for (int i=0; i<9; i++) {
+        
+            JPanel pilePanel = new JPanel();
+            pilePanel.setLayout(new OverlayLayout(pilePanel));
+            pilePanel.setOpaque(false);
+            pilePanel.setAlignmentY(0.0f);
+            if (i==0 || i==8) tableauPanel.add(new JLabel(""));
+            else {   
+                for (int j=0; j<i; j++) {
+                    Card card = deck.remove(0); 
+                    JLabel cardLabel;
+                    
+                    if (j==i-1) {
+                        cardLabel = createCardLabel(card, true);
+                    } else {
+                        cardLabel = createCardLabel(card, false);
+                    }
+                    cardLabel.setAlignmentY(0.0f);
+                    List<Card> pile = piles.get("pile"+i);
+                    if (pile == null) {
+                        pile = new ArrayList<>();
+                        piles.put("pile"+i,pile);
+                    } else {
+                        pile.add(card);
+                    }
+                   
+                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
+                    pilePanel.add(cardLabel,0);   
+                    
+                }
+                pilePanel.putClientProperty("pileNumber",i);
+                
+            }
+            tableauPanel.add(pilePanel);
+        }
+    }
 
 }
