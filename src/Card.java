@@ -1,6 +1,11 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.io.IOException;
+
 public class Card {
     
-    public static final String[] SUITS = {"Hearts", "Diamonds", "Clubs", "Spades"};
+    public static final String[] SUITS = {"hearts", "diamonds", "clubs", "spades"};
     public static final String[] RANKS = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
     
     private String suit;
@@ -8,9 +13,11 @@ public class Card {
     private String imgPath;
     private boolean isFaceUp;
 
-    public Card(String suit, String rank) {
+    public Card(String suit, String rank, boolean isFaceUp) {
         this.suit = suit;
         this.rank = rank;
+        this.isFaceUp = isFaceUp;
+        updateImgPath();
     }
     
     public String getSuit() {
@@ -40,10 +47,36 @@ public class Card {
         return imgPath;
     }
 
+    public BufferedImage getImg() {
+
+        try {
+
+            BufferedImage originalImage = ImageIO.read(getClass().getResource(imgPath));
+            if (originalImage == null) {
+                System.err.println("Failed to load image: " + imgPath);
+                return null;
+            }
+
+            BufferedImage scaledImage = new BufferedImage(80, 120, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = scaledImage.createGraphics();
+            g2d.drawImage(originalImage, 0, 0, 80, 120, null);
+            g2d.dispose();
+            
+            return scaledImage;
+        } catch (IOException e) {
+            System.err.println("error: "+ e);
+            return null;
+        }
+    }
+
     public boolean getIsFaceUp() {return isFaceUp;}
 
     public void setRank(String rank) {
         this.rank = rank;
+    }
+    
+    private void updateImgPath() {
+        this.imgPath = isFaceUp ? "cardsimgs/" + rank + "_of_" + suit + ".png" : "cardsimgs/back.png";
     }
 
     public void setSuit(String suit) {
@@ -56,6 +89,7 @@ public class Card {
 
     public void flip() {
         isFaceUp = !isFaceUp;
+        updateImgPath();
     }
     
 

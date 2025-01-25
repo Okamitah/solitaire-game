@@ -152,15 +152,21 @@ class Game {
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
 
         //
-        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
         JPanel cardPile = new JPanel();
         JPanel tabPanel = new JPanel(new GridLayout(1,9));
         tabPanel.setBackground(new Color(100,0,0));
         tabPanel.setOpaque(false);
+        List<Card> deck1 = createDeck();
 
         cardPile.add(tabPanel);
-        CardPile pile = new CardPile(tabPanel, createDeck(), 2, 't');
-        cardPile.add(pile);
+        for (int i=1; i<8; i++) {
+            CardPile pile = new CardPile(tabPanel, deck1, i, 't');
+            cardPile.add(pile);
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //
+
  
         // Timer panel
         JPanel timerPanel = new JPanel();
@@ -176,7 +182,11 @@ class Game {
         newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
         exitButton.addActionListener(e -> System.exit(0));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
-        seePile.addActionListener(e -> cardLayout.show(mainPanel, "CardPile"));
+        seePile.addActionListener(e -> {
+            cardLayout.show(mainPanel, "CardPile");
+            cardPile.revalidate();
+            cardPile.repaint();
+        });
         stockPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -205,7 +215,7 @@ class Game {
         for (String suit : suits) {
 
             for (String rank : ranks) { 
-                deck.add(new Card(suit, rank));
+                deck.add(new Card(suit, rank, false));
             }
 
         }
@@ -228,11 +238,8 @@ class Game {
 
     private JLabel createCardLabel(Card card, boolean isFaceUp) {
 
-        String imgPath = isFaceUp ? "cardsimgs/" + card.getRank() + "_of_" + card.getSuit() + ".png" : "cardsimgs/back.png";
-        ImageIcon icon = new ImageIcon(imgPath);
-
-        Image scaledImage = icon.getImage().getScaledInstance(80, 120, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(scaledImage);
+        Image scaledImage = card.getImg(); 
+        ImageIcon icon = new ImageIcon(scaledImage);
 
         JLabel cardLabel = new JLabel(icon);
         cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
