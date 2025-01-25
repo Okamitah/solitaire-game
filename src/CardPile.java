@@ -10,7 +10,10 @@ class CardPile extends JComponent {
     private int cardSpacing;
     private int cardWidth = 80;
     private int cardHeight = 120;
+    private List<Card> selectedCards = new ArrayList<>();
+    private int cardIndex = -1;
 
+    
     public CardPile(JPanel tableau, List<Card> deck, int order, char type) {
         
         cardSpacing = (type == 'F') ? 0 : 30;
@@ -19,7 +22,6 @@ class CardPile extends JComponent {
             Card card = deck.get(0);
             cards.add(card);
             deck.remove(0);
-            System.out.println(deck.size());
         }
         
         if (!cards.isEmpty()) cards.getLast().flip();
@@ -27,11 +29,16 @@ class CardPile extends JComponent {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int cardIndex = e.getY() / cardSpacing;
-                if (cardIndex >= 0 && cardIndex < cards.size()) {
-                    flipCard(cardIndex);
+                cardIndex = e.getY() / cardSpacing;
+                if (cardIndex >= 0 && cardIndex <= cards.size()) {
+                    Card card = cards.get(cardIndex);
+                    //flipCard(cardIndex);
+                    selectCards();
                 }
             }
+
+            //@Override
+            //public void mouse
         });
     }
 
@@ -63,4 +70,16 @@ class CardPile extends JComponent {
             repaint();
         }
     } 
+
+    private void selectCards() {
+        selectedCards.clear();
+        for (int i=cardIndex; i<cards.size(); i++) {
+            Card card = cards.get(i);
+            if (card.getIsFaceUp()) {
+                selectedCards.add(card);
+                System.out.println(card);
+            }
+            else {break;}
+        }
+    }
 }
