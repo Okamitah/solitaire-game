@@ -12,6 +12,7 @@ class CardPile extends JComponent {
     private int cardHeight = 120;
     private List<Card> selectedCards = new ArrayList<>();
     private int cardIndex = -1;
+    private Point dragOffset;
 
     
     public CardPile(JPanel tableau, List<Card> deck, int order, char type) {
@@ -34,11 +35,39 @@ class CardPile extends JComponent {
                     Card card = cards.get(cardIndex);
                     //flipCard(cardIndex);
                     selectCards();
+                    if (!selectedCards.isEmpty()) {
+                        dragOffset = new Point(e.getX(), e.getY() - cardIndex * cardSpacing);
+                    }
                 }
             }
 
-            //@Override
-            //public void mouse
+            /*@Override
+            public void mouseReleased(MouseEvent e) {
+                if (!selectedCards.isEmpty()) {
+                    Component target = SwingUtilities.getDeepestComponentAt(
+                        getTopLevelAncestor(), e.getXOnScreen(), e.getYOnScreen()
+                    );
+                    if (target instanceof CardPile) {
+                        CardPile targetPile = (CardPile) target;
+                        if (isValidMove(targetPile)) {
+                            moveCardsToPile(targetPile);
+                        }
+                    }
+                    selectedCards.clear();
+                    repaint();
+                }
+            }*/
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (!selectedCards.isEmpty()) {
+                    int x = e.getX() - dragOffset.x;
+                    int y = e.getY() - dragOffset.y;
+                    repaint();
+                }
+            }
         });
     }
 
@@ -49,12 +78,21 @@ class CardPile extends JComponent {
         int yOffset = 0;
 
         for (Card card : cards) {
-            Image image = card.getImg();
-            g.setColor(Color.WHITE); 
-            g.fillRect(0, yOffset, cardWidth, cardHeight);
-            g.setColor(Color.BLACK);
-            g.drawImage(image, 0, yOffset, this);
-            yOffset += cardSpacing;
+            if (!selectedCards.contains(card)){
+                Image image = card.getImg();
+                g.drawImage(image, 0, yOffset, this);
+                yOffset += cardSpacing;
+            }
+        }
+
+        if (!selectedCards.isEmpty()) {
+            Point mousePos = getMousePosition();
+            if (mousePos != null) {
+                int dragY = mousePos.y - dragOffset.y;
+                for (int i = 0; i < selectedCards.size(); i++) {
+                    g.drawImage(selectedCards.get(i).getImg(), 0, dragY + i * cardSpacing, this);
+                }
+            }
         }
     }
 
