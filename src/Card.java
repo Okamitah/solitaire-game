@@ -20,9 +20,7 @@ public class Card {
         updateImgPath();
     }
     
-    public String getSuit() {
-        return suit;
-    }
+    public String getSuit() { return suit; }
 
     public int getIntRank() {
         switch (rank) {
@@ -39,13 +37,9 @@ public class Card {
         }
     }
 
-    public String getRank() {
-        return rank;
-    }
+    public String getRank() { return rank; }
 
-    public String getImgPath() {
-        return imgPath;
-    }
+    public String getImgPath() { return imgPath; }
 
     public BufferedImage getImg() {
 
@@ -69,23 +63,21 @@ public class Card {
         }
     }
 
-    public boolean getIsFaceUp() {return isFaceUp;}
+    public boolean getIsFaceUp() { return isFaceUp; }
 
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
+    public String getColor() { return (suit == "hearts" || suit == "diamonds") ? "red" : "black"; }
+
+    public void setRank(String rank) { this.rank = rank; }
     
-    private void updateImgPath() {
-        this.imgPath = isFaceUp ? "cardsimgs/" + rank + "_of_" + suit + ".png" : "cardsimgs/back.png";
-    }
+    private void updateImgPath() { this.imgPath = isFaceUp ? "cardsimgs/" + rank + "_of_" + suit + ".png" : "cardsimgs/back.png"; }
 
-    public void setSuit(String suit) {
-        this.suit = suit;
-    }
+    public boolean isOppositeColor(Card card) { return (this.getColor() != card.getColor()); }
 
-    public void setImgPath(String image) {
-        this.imgPath = image;
-    }
+    public boolean isSameSuit(Card card) { return this.suit == card.suit; }
+
+    public void setSuit(String suit) { this.suit = suit; }
+
+    public void setImgPath(String image) { this.imgPath = image; }
 
     public void flip() {
         isFaceUp = !isFaceUp;
@@ -94,7 +86,5 @@ public class Card {
     
 
     @Override
-    public String toString() {
-        return rank + " of " + suit;
-    }
+    public String toString() { return rank + " of " + suit; }
 }
