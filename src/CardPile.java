@@ -14,7 +14,7 @@ public class CardPile extends JComponent {
     private static List<Card> draggingCards = new ArrayList<>();
     private Point dragOffset;
 
-    public CardPile(JPanel tabPanel, List<Card> deck, int order, char type) {
+    public CardPile(Tableau tableau, List<Card> deck, int order, char type) {
         this.cards = new ArrayList<>();
         this.cardSpacing = (type == 'F') ? 0 : 30;
 
@@ -28,6 +28,10 @@ public class CardPile extends JComponent {
             cards.get(cards.size() - 1).flip();
         }
 
+        updateMouseListeners(tableau);
+    }
+    
+    private void updateMouseListeners(Tableau tableau) {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -76,6 +80,7 @@ public class CardPile extends JComponent {
                 }
             }
         });
+
     }
 
     private boolean isValidMove(CardPile targetPile) {

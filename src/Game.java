@@ -140,8 +140,7 @@ class Game {
         gbc.weighty = 0.25;
         cardsPanel.add(aboveTableauPanel, gbc);
  
-        JPanel tableauPanel = new JPanel(new GridLayout(1,9));
-        tableauPanel.setBackground(new Color(100,0,0));
+        JPanel tableauPanel = new JPanel();
         tableauPanel.setOpaque(false);
         createTableau(tableauPanel, deck);
         gbc.gridx = 0;
@@ -151,23 +150,7 @@ class Game {
                
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
 
-        //
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-        JPanel cardPile = new JPanel();
-        JPanel tabPanel = new JPanel(new GridLayout(1,9));
-        tabPanel.setBackground(new Color(100,0,0));
-        tabPanel.setOpaque(false);
-        List<Card> deck1 = createDeck();
-
-        cardPile.add(tabPanel);
-        for (int i=1; i<8; i++) {
-            CardPile pile = new CardPile(tabPanel, deck1, i, 't');
-            cardPile.add(pile);
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-        //
-
- 
+         
         // Timer panel
         JPanel timerPanel = new JPanel();
         timerPanel.setBackground(new Color(0,0,0));
@@ -177,16 +160,10 @@ class Game {
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
 
-        mainPanel.add(cardPile, "CardPile");
         // Event listeners
         newGameButton.addActionListener(e -> cardLayout.show(mainPanel, "Game Screen"));
         exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Start Menu"));
-        seePile.addActionListener(e -> {
-            cardLayout.show(mainPanel, "CardPile");
-            cardPile.revalidate();
-            cardPile.repaint();
-        });
+        
         stockPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -248,42 +225,9 @@ class Game {
     }
     
     private void createTableau(JPanel tableauPanel, List<Card> deck) {
-        
-        for (int i=0; i<9; i++) {
-        
-            JPanel pilePanel = new JPanel();
-            pilePanel.setLayout(new OverlayLayout(pilePanel));
-            pilePanel.setOpaque(false);
-            pilePanel.setAlignmentY(0.0f);
-            if (i==0 || i==8) tableauPanel.add(new JLabel(""));
-            else {   
-                for (int j=0; j<i; j++) {
-                    Card card = deck.remove(0); 
-                    JLabel cardLabel;
-                    
-                    if (j==i-1) {
-                        cardLabel = createCardLabel(card, true);
-                    } else {
-                        cardLabel = createCardLabel(card, false);
-                    }
-                    cardLabel.setAlignmentY(0.0f);
-                    List<Card> pile = piles.get("pile"+i);
-                    if (pile == null) {
-                        pile = new ArrayList<>();
-                        piles.put("pile"+i,pile);
-                    } else {
-                        pile.add(card);
-                    }
-                   
-                    cardLabel.setBorder(BorderFactory.createEmptyBorder(j*30, 0, 0, 0));
-                    pilePanel.add(cardLabel,0);   
-                    
-                }
-                pilePanel.putClientProperty("pileNumber",i);
-                
-            }
-            tableauPanel.add(pilePanel);
-        }
+        Tableau tableau = new Tableau(deck);
+        tableauPanel.setLayout(new BorderLayout());
+        tableauPanel.add(tableau, BorderLayout.CENTER);
     }
 
 }
