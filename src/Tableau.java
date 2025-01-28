@@ -30,4 +30,22 @@ class Tableau extends JComponent {
         int totalWidth = (cardWidth + spacing) * 7;
         return new Dimension(totalWidth, cardHeight * 4);
     }
+
+    public boolean isValidMoveBetweenPiles(CardPile source, CardPile target, List<Card> draggedCards) {
+        if (target.isEmpty()) {
+            return draggedCards.get(0).getIntRank() == 13; // Only Kings on empty piles
+        }
+        
+        Card targetTopCard = target.getTopCard();
+        Card draggedBaseCard = draggedCards.get(0);
+        
+        return draggedBaseCard.isOppositeColor(targetTopCard) && 
+               draggedBaseCard.getIntRank() == targetTopCard.getIntRank() - 1;
+    }
+
+    public void moveCardsBetweenPiles(CardPile source, CardPile target, List<Card> cards) {
+        source.removeCards(cards);
+        target.addCards(cards);
+        repaint();
+    }
 }

@@ -24,13 +24,57 @@ public class CardPile extends JComponent {
             deck.remove(0);
         }
 
+        setupDragDrop(tableau);
+
         if (!cards.isEmpty()) {
             cards.get(cards.size() - 1).flip();
         }
 
         updateMouseListeners(tableau);
     }
+   
     
+    private void setupDragDrop(Tableau tableau) {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (!draggingCards.isEmpty()) {
+                    Point screenPoint = e.getLocationOnScreen();
+                    Point tableauPoint = new Point(screenPoint);
+                    SwingUtilities.convertPointFromScreen(screenPoint, tableau);
+
+                    
+                    Component targetComponent = SwingUtilities.getDeepestComponentAt(
+                        tableau, 
+                        tableauPoint.x, 
+                        tableauPoint.y
+                    );
+
+                    if (targetComponent instanceof CardPile) {
+                        CardPile targetPile = (CardPile) targetComponent;
+                        if (tableau.isValidMoveBetweenPiles(CardPile.this, targetPile, draggingCards)) {
+                            tableau.moveCardsBetweenPiles(CardPile.this, targetPile, draggingCards);
+                        }
+                    }
+                    
+                    draggingSource = null;
+                    draggingCards.clear();
+                    repaint();
+                }
+            }
+        });
+        
+    }
+
+    public void removeCards(List<Card> cardsToRemove) {
+        cards.removeAll(cardsToRemove);
+        if (!cards.isEmpty() && !cards.getLast().getIsFaceUp()) {
+            cards.getLast().flip();
+        }
+    }
+
+    
+
     private void updateMouseListeners(Tableau tableau) {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -52,23 +96,6 @@ public class CardPile extends JComponent {
                 }
             }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (!draggingCards.isEmpty()) {
-                    Component target = SwingUtilities.getDeepestComponentAt(
-                        getTopLevelAncestor(), e.getXOnScreen(), e.getYOnScreen()
-                    );
-                    if (target instanceof CardPile) {
-                        CardPile targetPile = (CardPile) target;
-                        if (isValidMove(targetPile)) {
-                            moveCardsToPile(targetPile);
-                        }
-                    }
-                    draggingSource = null;
-                    draggingCards.clear();
-                    repaint();
-                }
-            }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
