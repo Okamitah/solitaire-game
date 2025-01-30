@@ -37,14 +37,12 @@ class Game {
         JButton loadGameButton = new JButton("Load Game");
         JButton statsButton = new JButton("Statistics");
         JButton exitButton = new JButton("Exit");
-        JButton seePile = new JButton("see pile");
 
         startMenu.add(menu);
         startMenu.add(newGameButton);
         startMenu.add(loadGameButton);
         startMenu.add(statsButton);
         startMenu.add(exitButton);
-        startMenu.add(seePile);
 
         // The game screen:
         
