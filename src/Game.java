@@ -124,7 +124,6 @@ class Game {
 
         createStock(deck, stockPanel);
 
-        
         trashPanel.add(stockPanel);
         
         JPanel wastePanel = new JPanel();
@@ -135,7 +134,7 @@ class Game {
         aboveTableauPanel.add(trashPanel);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weighty = 0.25;
+        gbc.weighty = 0.2;
         cardsPanel.add(aboveTableauPanel, gbc);
  
         JPanel tableauPanel = new JPanel();
@@ -143,7 +142,7 @@ class Game {
         createTableau(tableauPanel, deck);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.weighty = 0.75;
+        gbc.weighty = 0.8;
         cardsPanel.add(tableauPanel, gbc);
                
         gameScreen.add(cardsPanel, BorderLayout.CENTER);
@@ -154,6 +153,7 @@ class Game {
         timerPanel.setBackground(new Color(0,0,0));
         timerPanel.add(new JLabel("Timer: 00:00"));
         gameScreen.add(timerPanel, BorderLayout.SOUTH);
+
         // Main panel
         mainPanel.add(startMenu, "Start Menu");
         mainPanel.add(gameScreen, "Game Screen");
@@ -169,6 +169,7 @@ class Game {
                     Component cardComponent = stockPanel.getComponent(0);
                     stockPanel.remove(cardComponent);
                     Card drawnCard = stock.remove(0);
+                    drawnCard.flip();
                     waste.add(drawnCard);
                     JLabel faceUpCard = createCardLabel(drawnCard, true);
                     wastePanel.add(faceUpCard,0); 
@@ -207,7 +208,6 @@ class Game {
             stock.add(card);
             JLabel cardLabel = createCardLabel(card, false);
             stockPanel.add(cardLabel);
-            stockPanel.putClientProperty("label"+(i+1), cardLabel);
         }
     }
 
