@@ -178,6 +178,16 @@ class Game {
                     wastePanel.revalidate();
                     wastePanel.repaint();
                 }
+                else {
+                    for (Card card : waste) {
+                        card.flip();
+                    }
+                    createStock(waste, stockPanel);
+                    waste.clear();
+                    wastePanel.removeAll();
+                    wastePanel.revalidate();
+                    wastePanel.repaint();
+                }
             }
         });
         frame.add(mainPanel); 
