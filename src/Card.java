@@ -1,9 +1,18 @@
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import java.awt.image.BufferedImage;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
-public class Card {
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+
+
+public class Card extends JLabel {
     
     public static final String[] SUITS = {"hearts", "diamonds", "clubs", "spades"};
     public static final String[] RANKS = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
@@ -12,12 +21,26 @@ public class Card {
     private String rank;
     private String imgPath;
     private boolean isFaceUp;
+    private ImageIcon frontImg;
+    private ImageIcon backImg;
 
-    public Card(String suit, String rank, boolean isFaceUp) {
+    public Card(String suit, String rank, String frontImagePath, String backImagePath) {
         this.suit = suit;
         this.rank = rank;
-        this.isFaceUp = isFaceUp;
-        updateImgPath();
+        this.isFaceUp = false;
+
+        this.frontImg = new ImageIcon(frontImagePath);
+        this.backImg = new ImageIcon(backImagePath);
+
+        setPreferredSize(new Dimension(80,120));
+        updateAppearance();
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                flip();
+            }
+        });
     }
     
     public String getSuit() { return suit; }
@@ -41,35 +64,19 @@ public class Card {
 
     public String getImgPath() { return imgPath; }
 
-    public BufferedImage getImg() {
-
-        try {
-
-            BufferedImage originalImage = ImageIO.read(getClass().getResource(imgPath));
-            if (originalImage == null) {
-                System.err.println("Failed to load image: " + imgPath);
-                return null;
-            }
-
-            BufferedImage scaledImage = new BufferedImage(80, 120, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = scaledImage.createGraphics();
-            g2d.drawImage(originalImage, 0, 0, 80, 120, null);
-            g2d.dispose();
-            
-            return scaledImage;
-        } catch (IOException e) {
-            System.err.println("error: "+ e);
-            return null;
-        }
-    }
-
     public boolean getIsFaceUp() { return isFaceUp; }
 
     public String getColor() { return (suit == "hearts" || suit == "diamonds") ? "red" : "black"; }
 
     public void setRank(String rank) { this.rank = rank; }
     
-    private void updateImgPath() { this.imgPath = isFaceUp ? "cardsimgs/" + rank + "_of_" + suit + ".png" : "cardsimgs/back.png"; }
+    private void updateAppearance() {
+        if (isFaceUp) {
+            setIcon(frontImg);
+        } else {
+            setIcon(backImg);
+        }
+    }
 
     public boolean isOppositeColor(Card card) { return (this.getColor() != card.getColor()); }
 
@@ -77,11 +84,9 @@ public class Card {
 
     public void setSuit(String suit) { this.suit = suit; }
 
-    public void setImgPath(String image) { this.imgPath = image; }
-
     public void flip() {
         isFaceUp = !isFaceUp;
-        updateImgPath();
+        updateAppearance();
     }
     
 
