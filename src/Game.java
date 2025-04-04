@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class Game extends Frame implements MouseListener {
+public class Game extends Frame implements MouseListener, MouseMotionListener {
 
     private Tableau tableau;
     private Foundations foundations;
@@ -21,6 +21,7 @@ public class Game extends Frame implements MouseListener {
         setResizable(false);
         setVisible(true);
         addMouseListener(this);
+        addMouseMotionListener(this);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
                 dispose();
@@ -37,7 +38,6 @@ public class Game extends Frame implements MouseListener {
             Card card = deck.removeLast();
             drawPile.add(card);
         }
-        System.out.println(deck.size());
     }
 
     @Override
@@ -74,15 +74,30 @@ public class Game extends Frame implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        /*pressX = e.getX();
+        pressX = e.getX();
         pressY = e.getY();
         for (CardPile stack : Tableau.getStacks()) {
             for (Card card : stack.getCards()) {
                 card.handlePress(pressX, pressY);
             }
         }
-        repaint();*/
+        repaint();
     }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        int dragX = e.getX();
+        int dragY = e.getY();
+        for (CardPile stack : Tableau.getStacks()) {
+            for (Card card : stack.getCards()) {
+                card.handleDrag(dragX, dragY);
+            }
+        }
+        repaint();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {}
 
     @Override
     public void mouseEntered(MouseEvent e) {}

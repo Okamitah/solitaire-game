@@ -66,7 +66,15 @@ public class Card {
 
     public void handlePress(int pressX, int pressY) {
         if (pressX>x && pressX<x+60 && pressY>y && pressY<y+80) {
-           System.out.println("oh");
+            int index = getIndex();
+            System.out.println(index);
+        }
+    }
+
+    public void handleDrag(int dragX, int dragY) {
+        if (dragX>x && dragX<x+60 && dragY>y && dragY<y+80) {
+            this.x = dragX;
+            this.y = dragY;
         }
     }
 
@@ -107,5 +115,9 @@ public class Card {
             default:
                 return Integer.parseInt(rank);
         }
+    }
+
+    public int getIndex() {
+        return y/50 - 4;
     }
 }
