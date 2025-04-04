@@ -1,28 +1,50 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CardPile {
 
     private int spacing;
-    
+    private int startY;
+    private int startX;
     private List<Card> cards;
     private List<Card> draggedCards;
+    private String content;
 
     public CardPile(String type, boolean graphical) {
         this.cards = new ArrayList<>();
         switch (type) {
-            case "F":
+            case "FH":
                 this.spacing = 0;
+                this.startY = 50;
+                content = "♡";          
+                break;
+            case "FD":
+                this.spacing = 0;
+                this.startY = 50;
+                content = "♢";
+                break;
+            case "FS":
+                this.spacing = 0;
+                this.startY = 50;
+                content = "♤";
+                break;
+            case "FC":
+                this.spacing = 0;
+                this.startY = 50;
+                content = "♧";
                 break;
             case "T":
                 this.spacing = 30;
+                this.startY = 200;
+                content = "K";
             default:
                 break;
         }
     }
 
-    public void addCards(ArrayList<Card> addedCards) {
-        this.cards.addAll(addedCards);
+    public void addCards(Card addedCards) {
+        this.cards.add(addedCards);
     }
 
     public void fillAtFirst(int nbCards, ArrayList<Card> deck) {
@@ -43,9 +65,21 @@ public class CardPile {
         }
     }
 
-    public void drawPile() {
+    public List<Card> getCards() {return this.cards;}
+
+    public void drawPile(int x, Graphics g) {
+        int y = startY;
+        g.setColor(Color.black);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 15)); 
+        g.drawString(content, x+10, y+10);
+        g.setColor(Color.black);
+        g.drawRect(x, y, 60, 80);
         for (Card card : cards) {
-            System.out.println(card.getRank() + "_of_" + card.getSuit());
+            card.draw(g, x, y);
+            card.setXY(x, y);
+            y += spacing;
         }
     }
+
+    public boolean isEmpty() {return this.cards.isEmpty();}
 }
