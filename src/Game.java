@@ -12,6 +12,8 @@ public class Game extends Frame implements MouseListener {
     private List<Card> discardPile;
     private int clickX;
     private int clickY;
+    private int pressX;
+    private int pressY;
     
     public Game() {
         setSize(900,600);
@@ -35,6 +37,7 @@ public class Game extends Frame implements MouseListener {
             Card card = deck.removeLast();
             drawPile.add(card);
         }
+        System.out.println(deck.size());
     }
 
     @Override
@@ -55,20 +58,31 @@ public class Game extends Frame implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         clickX = e.getX();
         clickY = e.getY();
+        Card toRemoveCard = null;
         if (clickY > 180) {
-            for (CardPile stack : tableau.getStacks()) {
+            for (CardPile stack : Tableau.getStacks()) {
                 for (Card card : stack.getCards()) {
-                    card.handleClick(clickX, clickY);
+                    toRemoveCard = card.handleClick(clickX, clickY);
                 }
+                stack.removeCard(toRemoveCard);
             }
         } else {
-            drawPile.getLast().handleClick(clickX, clickY);
+            drawPile.get(0).flip();
         }
         repaint();
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+        /*pressX = e.getX();
+        pressY = e.getY();
+        for (CardPile stack : Tableau.getStacks()) {
+            for (Card card : stack.getCards()) {
+                card.handlePress(pressX, pressY);
+            }
+        }
+        repaint();*/
+    }
 
     @Override
     public void mouseEntered(MouseEvent e) {}

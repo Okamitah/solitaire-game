@@ -35,7 +35,7 @@ public class CardPile {
                 content = "♧";
                 break;
             case "T":
-                this.spacing = 30;
+                this.spacing = 50;
                 this.startY = 200;
                 content = "K";
             default:
@@ -65,12 +65,16 @@ public class CardPile {
         }
     }
 
+    public void removeCard(Card card) {
+        this.cards.remove(card);
+    }
+
     public List<Card> getCards() {return this.cards;}
 
     public void drawPile(int x, Graphics g) {
         int y = startY;
         g.setColor(Color.black);
-        g.setFont(new Font("TimesRoman", Font.PLAIN, 15)); 
+        g.setFont(new Font("Arial", Font.PLAIN, 15)); 
         g.drawString(content, x+10, y+10);
         g.setColor(Color.black);
         g.drawRect(x, y, 60, 80);
@@ -80,6 +84,15 @@ public class CardPile {
             y += spacing;
         }
     }
+    
+    public void setX(int x) {this.startX = x;}
+    
+    public boolean isThisTheStack(int x) {
+        if (startX==x) return true;
+        return false;
+    }
 
     public boolean isEmpty() {return this.cards.isEmpty();}
+
+    public Card get(int index) {return this.cards.get(index);}
 }

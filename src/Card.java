@@ -11,6 +11,7 @@ public class Card {
     private String imgPath;
     private int x;
     private int y;
+    private CardPile currentStack;
 
     public Card(String rank, String suit, boolean visibility) {
         this.rank = rank;
@@ -41,9 +42,31 @@ public class Card {
         }
     }
 
-    public void handleClick(int clickX, int clickY) {
+    public Card handleClick(int clickX, int clickY) {
+
         if (clickX>x && clickX<x+60 && clickY>y && clickY<y+80) {
-            this.flip();
+            CardPile targetFoundation = Foundations.getFoundations().get(this.suitToInt());
+            if (GameLogic.canBeAddedToFoundations(this,targetFoundation)) {
+                targetFoundation.addCards(this);
+                for (CardPile pile : Tableau.getStacks()) {
+                    if (pile.isThisTheStack(x)) {
+                        currentStack = pile;
+                        int indice = currentStack.getCards().indexOf(this);
+                        if (indice>0) {
+                            Card prevCard = currentStack.get(indice-1);
+                            prevCard.flip();
+                        }
+                    }
+                } 
+                return this;
+            }
+        }
+        return null;
+    }
+
+    public void handlePress(int pressX, int pressY) {
+        if (pressX>x && pressX<x+60 && pressY>y && pressY<y+80) {
+           System.out.println("oh");
         }
     }
 

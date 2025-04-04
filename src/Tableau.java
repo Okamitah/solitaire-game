@@ -3,7 +3,8 @@ import java.util.*;
 
 public class Tableau {
 
-    private List<CardPile> stacks;
+    private static List<CardPile> stacks;
+    static Tableau tableau = null;
     private ArrayList<Card> deck;
     private String[] suits = {"hearts", "diamonds", "spades", "clubs"};
     private String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
@@ -15,12 +16,14 @@ public class Tableau {
             stacks.add(new CardPile("T", true));
             stacks.get(i).fillAtFirst(i+1, deck);
         }
+
     }
 
     public void draw(Graphics g) {
         int x = 50;
         for (CardPile stack : stacks) {
             stack.drawPile(x, g);
+            stack.setX(x);
             x += 120;
         }
     }
@@ -37,5 +40,6 @@ public class Tableau {
 
     public List<Card> getDeck() {return this.deck;}
 
-    public List<CardPile> getStacks() {return this.stacks;}
+    public static List<CardPile> getStacks() {return stacks;}
+
 }

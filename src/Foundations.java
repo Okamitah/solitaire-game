@@ -4,10 +4,10 @@ import java.awt.Graphics;
 
 public class Foundations {
 
-    private List<CardPile> foundations;
+    private static List<CardPile> foundations;
 
     public Foundations() {
-        this.foundations = new ArrayList<>();
+        foundations = new ArrayList<>();
         String[] suits = {"H","D","S","C"};
         for (int i=0; i<4; i++) {
             foundations.add(new CardPile("F"+suits[i],true));
@@ -21,6 +21,6 @@ public class Foundations {
         }
     }
 
-    public List<CardPile> getFoundations() {return this.foundations;}
+    public static List<CardPile> getFoundations() {return foundations;}
 
 }
