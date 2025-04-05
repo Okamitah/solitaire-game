@@ -8,7 +8,8 @@ public class CardPile {
     private int startY;
     private int startX;
     private List<Card> cards;
-    private List<Card> draggedCards;
+    private MovingPile movingPile;
+    private List<Card> draggingCards;
     private String content;
 
     public CardPile(String type, boolean graphical) {
@@ -55,18 +56,25 @@ public class CardPile {
         }
     }
 
-    public void removeCards(int removedCardsIndex) {
-        Card topCard = cards.get(removedCardsIndex);
-        if (topCard.getVis()) {
-            for (int i=removedCardsIndex; i<cards.size(); i++) {
-                Card card = cards.remove(removedCardsIndex); // I have to return to this later and check
-                draggedCards.add(card);
-            }
-        }
-    }
-
     public void removeCard(Card card) {
         this.cards.remove(card);
+    }
+
+    public void handleDrag(int dragX, int dragY) {
+        int index = -1;
+        movingPile = new MovingPile();
+        for (Card card : cards) {
+            if (card.handlePress(dragX, dragY)>=0) {
+                index = card.handlePress(dragX, dragY);
+        
+                for (int i=index; i<cards.size(); i++) {
+                    Card toAddCard = cards.remove(i);
+                    draggingCards.add(toAddCard);
+                }
+                break;
+            }
+        }
+        movingPile.addCardsToDrag(draggingCards);
     }
 
     public List<Card> getCards() {return this.cards;}
@@ -86,6 +94,12 @@ public class CardPile {
     }
     
     public void setX(int x) {this.startX = x;}
+
+    public void setY(int y) {this.startY = y;}
+
+    public int getX() {return this.startX;}
+
+    public int getY() {return this.startY;}
     
     public boolean isThisTheStack(int x) {
         if (startX==x) return true;

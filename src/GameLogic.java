@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class GameLogic {
 
     public GameLogic() {
@@ -18,8 +20,8 @@ public class GameLogic {
         return false;
     }
 
-    public static boolean canBeMovedToPile(CardPile cardsToMove, CardPile targetPile) {
-        Card topMovedCard = cardsToMove.getCards().get(0);
+    public static boolean canBeMovedToPile(List<Card> cardsToMove, CardPile targetPile) {
+        Card topMovedCard = cardsToMove.get(0);
         int movedCardRank = topMovedCard.rankToInt();
         if (targetPile.isEmpty() && movedCardRank == 13) return true;
         else {
