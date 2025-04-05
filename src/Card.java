@@ -64,11 +64,12 @@ public class Card {
         return null;
     }
 
-    public void handlePress(int pressX, int pressY) {
+    public int handlePress(int pressX, int pressY) {
         if (pressX>x && pressX<x+60 && pressY>y && pressY<y+80) {
             int index = getIndex();
-            System.out.println(index);
+            return index;
         }
+        return -1;
     }
 
     public void handleDrag(int dragX, int dragY) {
@@ -119,5 +120,9 @@ public class Card {
 
     public int getIndex() {
         return y/50 - 4;
+    }
+
+    public String getColor() {
+        return (this.suit == "hearts" || this.suit == "diamonds") ? "red" : "black";
     }
 }

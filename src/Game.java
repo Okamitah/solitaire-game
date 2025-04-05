@@ -93,6 +93,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 card.handleDrag(dragX, dragY);
             }
         }
+
         repaint();
     }
 

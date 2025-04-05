@@ -17,4 +17,21 @@ public class GameLogic {
 
         return false;
     }
+
+    public static boolean canBeMovedToPile(CardPile cardsToMove, CardPile targetPile) {
+        Card topMovedCard = cardsToMove.getCards().get(0);
+        int movedCardRank = topMovedCard.rankToInt();
+        if (targetPile.isEmpty() && movedCardRank == 13) return true;
+        else {
+            Card bottomTargetCard = targetPile.getCards().getLast();
+            if (canCardsMerge(topMovedCard, bottomTargetCard)) return true;
+        }
+        return false;
+    }
+
+    private static boolean canCardsMerge(Card movedCard, Card targetCard) {
+        if (movedCard.rankToInt()==targetCard.rankToInt()-1 && movedCard.getColor()!=targetCard.getColor()) return true;
+        return false;
+    }
+
 }
