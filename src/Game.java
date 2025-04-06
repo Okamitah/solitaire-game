@@ -9,8 +9,9 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
     private Tableau tableau;
     private Foundations foundations;
     private MovingPile movingPile;
+    private DrawAndWastePile drawAndWastePile;
     private List<Card> drawPile;
-    private List<Card> discardPile;
+    private List<Card> wastePile;
     private int clickX;
     private int clickY;
     private int pressX;
@@ -30,16 +31,13 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
             }
         });
         
-        drawPile = new ArrayList<>();
-        discardPile = new ArrayList<>();
         tableau = new Tableau();
         foundations = new Foundations();
         List<Card> deck = tableau.getDeck();
+        drawAndWastePile = new DrawAndWastePile(deck);
+        drawPile = drawAndWastePile.getDrawPile();
+        wastePile = drawAndWastePile.getWastePile();
 
-        for (int i = 0; i < 24; i++) {
-            Card card = deck.removeLast();
-            drawPile.add(card);
-        }
     }
 
     @Override
@@ -50,13 +48,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
             movingPile.draw(g);
         }
 
-        if (!drawPile.isEmpty()) {
-            drawPile.get(0).draw(g, 50, 50);
-        }
-
-        if (!discardPile.isEmpty()) {
-            discardPile.get(discardPile.size() - 1).draw(g, 200, 50);
-        }
+        drawAndWastePile.draw(g);
     }
 
     @Override
@@ -72,7 +64,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 stack.removeCard(toRemoveCard);
             }
         } else {
-            drawPile.get(0).flip();
+            drawAndWastePile.getCard();
         }
         repaint();
     }
@@ -134,6 +126,8 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 e.getY() >= pile.getY() && e.getY() <= pile.getY() + 80 * pile.getCards().size()) {
                     if (GameLogic.canBeMovedToPile(movingPile.getCards(), pile)) {
                         pile.getCards().addAll(movingPile.draggedCards);
+                        Card toFlipCard = Tableau.getStacks().get(sourcePileIndex).getCards().getLast();
+                        if (!toFlipCard.getVis()) toFlipCard.flip();
                         dropped = true;
                         break;
                     } 
