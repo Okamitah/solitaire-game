@@ -15,6 +15,7 @@ public class Tableau {
         for (int i=0; i<7; i++) {
             stacks.add(new CardPile("T", true));
             stacks.get(i).fillAtFirst(i+1, deck);
+            stacks.get(i).setIndex(i);
         }
 
     }

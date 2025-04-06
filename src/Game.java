@@ -15,6 +15,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
     private int clickY;
     private int pressX;
     private int pressY;
+    private int sourcePileIndex;
     
     public Game() {
         setSize(900,600);
@@ -83,15 +84,22 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
         movingPile = null;
 
         for (CardPile stack : Tableau.getStacks()) {
+
             List<Card> cards = stack.getCards();
             for (int i = 0; i < cards.size(); i++) {
+
                 Card card = cards.get(i);
+
                 if (e.getX() >= card.getX() && e.getX() <= card.getX() + 60 &&
                 e.getY() >= card.getY() && e.getY() <= card.getY() + 80) {
+
                     List<Card> draggedCards = new ArrayList<>();
+                    sourcePileIndex = stack.getIndex();
+
                     for (int j = i; j < cards.size(); j++) {
                         draggedCards.add(cards.remove(j--));
                     }
+
                     movingPile = new MovingPile();
                     movingPile.addCardsToDrag(draggedCards);
                     movingPile.setXY(e.getX(), e.getY());
@@ -128,8 +136,11 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                         pile.getCards().addAll(movingPile.draggedCards);
                         dropped = true;
                         break;
-                    }
+                    } 
                 }
+            }
+            if (!dropped) {
+                Tableau.getStacks().get(sourcePileIndex).getCards().addAll(movingPile.draggedCards);
             }
         }
         movingPile = null;

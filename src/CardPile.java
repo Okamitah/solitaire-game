@@ -11,6 +11,7 @@ public class CardPile {
     private MovingPile movingPile;
     private List<Card> draggingCards;
     private String content;
+    private int tableauIndex;
 
     public CardPile(String type, boolean graphical) {
         this.cards = new ArrayList<>();
@@ -96,6 +97,10 @@ public class CardPile {
     public void setX(int x) {this.startX = x;}
 
     public void setY(int y) {this.startY = y;}
+
+    public void setIndex(int index) {this.tableauIndex=index;}
+
+    public int getIndex() {return this.tableauIndex;}
 
     public int getX() {return this.startX;}
 
