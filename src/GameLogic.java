@@ -36,4 +36,14 @@ public class GameLogic {
         return false;
     }
 
+    public static boolean wonGame() {
+        for (CardPile pile : Tableau.getStacks()) {
+            for (Card card : pile.getCards()) {
+                if (!card.getVis()) return false;
+            }
+        }
+        System.out.println("Congraaaats u won!!");
+        return true;
+    }
+
 }

@@ -17,7 +17,7 @@ public class Foundations {
         int x = 350;
         for (CardPile foundation : foundations) {
             foundation.drawPile(x,g);
-            x += 120;
+            x += 100;
         }
     }
 

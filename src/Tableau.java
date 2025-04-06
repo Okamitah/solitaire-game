@@ -25,7 +25,7 @@ public class Tableau {
         for (CardPile stack : stacks) {
             stack.drawPile(x, g);
             stack.setX(x);
-            x += 120;
+            x += 100;
         }
     }
 
@@ -36,6 +36,7 @@ public class Tableau {
                 deck.add(new Card(rank, suit, false));
             }
         }
+        Collections.shuffle(deck);
         return deck;
     }
 

@@ -65,7 +65,7 @@ public class Card {
     }
 
     public int handlePress(int pressX, int pressY) {
-        if (pressX>x && pressX<x+60 && pressY>y && pressY<y+80) {
+        if (pressX>x && pressX<x+60 && pressY>y && pressY<y+30) {
             int index = getIndex();
             return index;
         }
@@ -73,7 +73,7 @@ public class Card {
     }
 
     public void handleDrag(int dragX, int dragY) {
-        if (dragX>x && dragX<x+60 && dragY>y && dragY<y+80) {
+        if (dragX>x && dragX<x+60 && dragY>y && dragY<y+30) {
             this.x = dragX;
             this.y = dragY;
         }

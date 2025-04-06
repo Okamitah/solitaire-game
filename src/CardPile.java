@@ -105,6 +105,11 @@ public class CardPile {
     public int getX() {return this.startX;}
 
     public int getY() {return this.startY;}
+
+    public int getPileLength() {
+        int minCard = Math.max(this.getY()+80, this.getY()+80*cards.size());
+        return minCard;
+    }
     
     public boolean isThisTheStack(int x) {
         if (startX==x) return true;

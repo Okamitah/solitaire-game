@@ -16,12 +16,13 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
     private int clickY;
     private int pressX;
     private int pressY;
+    private static final int DRAG_THRESHOLD = 15;
     private int sourcePileIndex;
     
     public Game() {
         setSize(900,600);
         setTitle("Solitaire");
-        setResizable(false);
+        setResizable(true);
         setVisible(true);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -44,7 +45,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
     public void paint(Graphics g) {
         tableau.draw(g);
         foundations.draw(g);
-        if (movingPile != null && !movingPile.draggedCards.isEmpty()) {
+        if (movingPile != null && !movingPile.getCards().isEmpty()) {
             movingPile.draw(g);
         }
 
@@ -63,8 +64,15 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 }
                 stack.removeCard(toRemoveCard);
             }
-        } else {
+        } else if (clickX>50 && clickX<110 && clickY<130 && clickY>50){
             drawAndWastePile.getCard();
+        } else if (clickX>150 && clickX<210 && clickY<130 && clickY>50) {
+            Card lastCard = drawAndWastePile.getWastePile().getLast();
+            CardPile targetFoundation = Foundations.getFoundations().get(lastCard.suitToInt());
+            if (GameLogic.canBeAddedToFoundations(lastCard,targetFoundation)) {
+                targetFoundation.addCards(lastCard);
+                drawAndWastePile.getWastePile().remove(lastCard);
+            }
         }
         repaint();
     }
@@ -83,7 +91,7 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 Card card = cards.get(i);
 
                 if (e.getX() >= card.getX() && e.getX() <= card.getX() + 60 &&
-                e.getY() >= card.getY() && e.getY() <= card.getY() + 80) {
+                e.getY() >= card.getY() && e.getY() <= card.getY() + 30) {
 
                     List<Card> draggedCards = new ArrayList<>();
                     sourcePileIndex = stack.getIndex();
@@ -105,9 +113,13 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (movingPile != null) {
-            movingPile.setXY(e.getX(), e.getY());
-            repaint();
+        int dragX = e.getX();
+        int dragY = e.getY();
+        if (Math.abs(dragX - pressX) > DRAG_THRESHOLD || Math.abs(dragY - pressY) > DRAG_THRESHOLD) {
+            if (movingPile != null) {
+                movingPile.setXY(e.getX(), e.getY());
+                repaint();
+            }
         }
     }
 
@@ -119,13 +131,12 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (movingPile != null && !movingPile.draggedCards.isEmpty()) {
             boolean dropped = false;
             for (CardPile pile : Tableau.getStacks()) {
-                if (e.getX() >= pile.getX() && e.getX() <= pile.getX() + 60 &&
-                e.getY() >= pile.getY() && e.getY() <= pile.getY() + 80 * pile.getCards().size()) {
+                if (e.getX()>pile.getX() && e.getX()<pile.getX()+60 && e.getY()>pile.getY()
+                && e.getY()<pile.getPileLength()) {
                     if (GameLogic.canBeMovedToPile(movingPile.getCards(), pile)) {
-                        pile.getCards().addAll(movingPile.draggedCards);
+                        pile.getCards().addAll(movingPile.getCards());
                         Card toFlipCard = Tableau.getStacks().get(sourcePileIndex).getCards().getLast();
                         if (!toFlipCard.getVis()) toFlipCard.flip();
                         dropped = true;
@@ -134,9 +145,8 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
                 }
             }
             if (!dropped) {
-                Tableau.getStacks().get(sourcePileIndex).getCards().addAll(movingPile.draggedCards);
+                Tableau.getStacks().get(sourcePileIndex).getCards().addAll(movingPile.getCards());
             }
-        }
         movingPile = null;
         repaint();
     }
