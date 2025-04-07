@@ -5,6 +5,7 @@ public class Card {
 
     private String rank;
     private String suit;
+    private String suitEmoji;
     private boolean isFaceUp;
     private int height = 80;
     private int width = 60;
@@ -32,13 +33,18 @@ public class Card {
     public void draw(Graphics g, int x, int y) {
         if (isFaceUp) {
             g.setColor(Color.white);
+            g.fillRect(x, y, width, height/2);
+            if (this.getColor()=="red") g.setColor(Color.red);
+            else g.setColor(Color.black);
+            g.fillRect(x, y+height/2, width, height/2);
+            g.setColor(Color.black);
+            g.drawRect(x, y, width, height);
+            g.drawString(rank + " " + suitToEmoji(), x+10, y+20);
+        } else {
+            g.setColor(Color.blue);
             g.fillRect(x, y, width, height);
             g.setColor(Color.black);
             g.drawRect(x, y, width, height);
-            g.drawString(rank + "_of_" + suit, x+10, y+20);
-        } else {
-            g.setColor(Color.red);
-            g.fillRect(x, y, width, height);
         }
     }
 
@@ -100,6 +106,22 @@ public class Card {
                 return 3;
             default:
                 return -1;
+        }
+    }
+
+    public String suitToEmoji() {
+        switch (suit) {
+            case "hearts":
+                return "♡";
+            case "diamonds":
+                return "♢";
+            case "spades":
+                return "♤";
+            case "clubs":
+                return "♧";
+
+            default:
+                return "";
         }
     }
 

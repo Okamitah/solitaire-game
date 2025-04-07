@@ -23,7 +23,7 @@ public class GameLogic {
     public static boolean canBeMovedToPile(List<Card> cardsToMove, CardPile targetPile) {
         Card topMovedCard = cardsToMove.get(0);
         int movedCardRank = topMovedCard.rankToInt();
-        if (targetPile.isEmpty() && movedCardRank == 13) return true;
+        if (targetPile.getCards().isEmpty() && movedCardRank == 13) return true;
         else {
             Card bottomTargetCard = targetPile.getCards().getLast();
             if (canCardsMerge(topMovedCard, bottomTargetCard)) return true;
