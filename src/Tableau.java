@@ -7,7 +7,7 @@ public class Tableau {
     static Tableau tableau = null;
     private ArrayList<Card> deck;
     private String[] suits = {"hearts", "diamonds", "spades", "clubs"};
-    private String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    private String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
     public Tableau() {
         stacks = new ArrayList<>();
@@ -33,7 +33,7 @@ public class Tableau {
         ArrayList<Card> deck = new ArrayList<>();
         for (String rank : ranks) {
             for (String suit : suits){
-                deck.add(new Card(rank, suit, false));
+                deck.add(new Card(rank, suit, false, false));
             }
         }
         Collections.shuffle(deck);

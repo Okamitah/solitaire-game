@@ -21,6 +21,15 @@ public class Foundations {
         }
     }
 
+    public void addToFoundation(MovingPile pile) {
+        if (pile.getCards().size()==1 && GameLogic.canBeAddedToFoundations(pile.getCards().get(0), Foundations.getFoundations().get(pile.getCards().get(0).suitToInt())))
+            Foundations.getFoundations().get(pile.getCards().get(0).suitToInt()).getCards().addAll(pile.getCards());
+        
+        else {
+
+        }
+    }
+
     public static List<CardPile> getFoundations() {return foundations;}
 
 }
