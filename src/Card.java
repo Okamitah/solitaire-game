@@ -11,14 +11,13 @@ public class Card implements ImageObserver {
     private String rank;
     private String suit;
     private boolean isFaceUp;
-    private int height = 80;
-    private int width = 60;
+    public static int height = 80;
+    public static int width = 60;
     private boolean useImg;
     private String imgPath;
     private Image image;
     private int x;
     private int y;
-    private CardPile currentStack;
 
     public Card(String rank, String suit, boolean visibility, boolean useImg) {
         this.rank = rank;
@@ -51,13 +50,13 @@ public class Card implements ImageObserver {
         if (!useImg) {
             if (isFaceUp) {
                 g.setColor(Color.white);
-                g.fillRect(x, y, width, height / 2);
+                g.fillRect(x, y, width, height/3);
                 if (this.getColor().equals("red")) {
                     g.setColor(Color.red);
                 } else {
                     g.setColor(Color.black);
                 }
-                g.fillRect(x, y + height / 2, width, height / 2);
+                g.fillRect(x, y + height/3, width, 2*height/3);
                 g.setColor(Color.black);
                 g.drawRect(x, y, width, height);
                 g.drawString(rank + " " + suitToEmoji(), x + 10, y + 20);

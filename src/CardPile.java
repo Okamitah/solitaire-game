@@ -37,7 +37,7 @@ public class CardPile {
                 content = "♧";
                 break;
             case "T":
-                this.spacing = 50;
+                this.spacing = 30;
                 this.startY = 200;
                 content = "K";
             default:
@@ -86,7 +86,7 @@ public class CardPile {
         g.setFont(new Font("Arial", Font.PLAIN, 15)); 
         g.drawString(content, x+10, y+10);
         g.setColor(Color.black);
-        g.drawRect(x, y, 60, 80);
+        g.drawRect(x, y, Card.width, Card.height);
         for (Card card : cards) {
             card.draw(g, x, y);
             card.setXY(x, y);
@@ -107,7 +107,7 @@ public class CardPile {
     public int getY() {return this.startY;}
 
     public int getPileLength() {
-        int minCard = Math.max(this.getY()+80, this.getY()+80*cards.size());
+        int minCard = Math.max(this.getY()+Card.height, this.getY()+Card.height*cards.size());
         return minCard;
     }
     
@@ -119,4 +119,8 @@ public class CardPile {
     public boolean isEmpty() {return this.cards.isEmpty();}
 
     public Card get(int index) {return this.cards.get(index);}
+
+    public void setSpacing(int spacing) {this.spacing = spacing;}
+
+    public int getSpacing() {return this.spacing;}
 }
