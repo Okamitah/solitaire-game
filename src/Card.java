@@ -51,15 +51,15 @@ public class Card implements ImageObserver {
             if (isFaceUp) {
                 g.setColor(Color.white);
                 g.fillRect(x, y, width, height/3);
+                g.setColor(Color.black);
+                g.drawRect(x, y, width, height);
                 if (this.getColor().equals("red")) {
                     g.setColor(Color.red);
                 } else {
                     g.setColor(Color.black);
                 }
                 g.fillRect(x, y + height/3, width, 2*height/3);
-                g.setColor(Color.black);
-                g.drawRect(x, y, width, height);
-                g.drawString(rank + " " + suitToEmoji(), x + 10, y + 20);
+                g.drawString(rankToSubRank() + " " + suitToEmoji(), x + 10, y + 20);
             } else {
                 g.setColor(Color.blue);
                 g.fillRect(x, y, width, height);
@@ -94,26 +94,6 @@ public class Card implements ImageObserver {
         }
     }
 
-    /*public Card handleClick(int clickX, int clickY) {
-        if (clickX > x && clickX < x + width && clickY > y && clickY < y + height) {
-            CardPile targetFoundation = Foundations.getFoundations().get(this.suitToInt());
-            if (GameLogic.canBeAddedToFoundations(this, targetFoundation)) {
-                targetFoundation.addCards(this);
-                for (CardPile pile : Tableau.getStacks()) {
-                    if (pile.isThisTheStack(x)) {
-                        currentStack = pile;
-                        int indice = currentStack.getCards().indexOf(this);
-                        if (indice > 0) {
-                            Card prevCard = currentStack.get(indice - 1);
-                            prevCard.flip();
-                        }
-                    }
-                }
-                return this;
-            }
-        }
-        return null;
-    }*/
 
     public int handlePress(int pressX, int pressY) {
         if (pressX > x && pressX < x + width && pressY > y && pressY < y + height) {
@@ -170,6 +150,21 @@ public class Card implements ImageObserver {
                 return "♧";
             default:
                 return "";
+        }
+    }
+
+    public String rankToSubRank() {
+        switch (rank) {
+            case "king":
+                return "K"; 
+            case "queen":
+                return "Q";
+            case "jack":
+                return "J";
+            case "ace":
+                return "A";
+            default:
+                return rank;
         }
     }
 

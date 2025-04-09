@@ -9,8 +9,6 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
     private Foundations foundations;
     private MovingPile movingPile;
     private DrawAndWastePile drawAndWastePile;
-    private List<Card> drawPile;
-    private List<Card> wastePile;
     private int clickX;
     private int clickY;
     private int pressX;
@@ -35,8 +33,6 @@ public class Game extends Frame implements MouseListener, MouseMotionListener {
         foundations = new Foundations();
         List<Card> deck = tableau.getDeck();
         drawAndWastePile = new DrawAndWastePile(deck);
-        drawPile = drawAndWastePile.getDrawPile();
-        wastePile = drawAndWastePile.getWastePile();
     }
 
     @Override
